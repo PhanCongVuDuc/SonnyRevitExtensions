@@ -80,7 +80,7 @@ public static class XYZComparisonExtensions
   }
 
   /// <summary>
-  /// Removes duplicate points from a collection based on distance tolerance
+  /// Removes duplicate points
   /// </summary>
   /// <param name="xyzes">Collection of points</param>
   /// <returns>List of distinct points</returns>

@@ -42,6 +42,9 @@
         <PackageReference Include="Nice3point.Revit.Extensions" Version="$(RevitVersion).*"/>
         <PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(RevitVersion).*"/>
         <PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(RevitVersion).*"/>
+        
+        <!-- LINQ Extensions - Only needed for .NET Framework 4.8 (Revit 2021-2024) -->
+        <PackageReference Include="MoreLinq" Version="3.4.2"/>
     </ItemGroup>
 
 </Project>
