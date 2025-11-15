@@ -1,4 +1,4 @@
-namespace SonnyRevitExtensions.Extensions.Lines ;
+namespace SonnyRevitExtensions.Extensions.Curves.Lines ;
 
 public static partial class LineExtensions
 {
