@@ -206,4 +206,24 @@ public static partial class XYZGeometryExtensions
     var distanceToEnd = lineEndPoint.DistanceTo( testPoint ) ;
     return Math.Abs( distanceLine - distanceToFrom - distanceToEnd ) < tolerance ;
   }
+
+  /// <summary>
+  /// Calculates the perpendicular distance from a point to a plane
+  /// </summary>
+  /// <param name="normalOfPlane">Normal vector of the plane</param>
+  /// <param name="originOfPlane">Origin point on the plane</param>
+  /// <param name="anyPoint">Point to calculate distance from</param>
+  /// <returns>The perpendicular distance from the point to the plane</returns>
+  public static double GetDistanceToPlane( this XYZ normalOfPlane,
+    XYZ originOfPlane,
+    XYZ anyPoint )
+  {
+    var plane = Plane.CreateByNormalAndOrigin( normalOfPlane,
+      originOfPlane ) ;
+    var planeConstant = plane.Normal.DotProduct( -plane.Origin ) ;
+    var numerator = plane.Normal.DotProduct( anyPoint ) + planeConstant ;
+
+    var normalLength = Math.Sqrt( plane.Normal.DotProduct( plane.Normal ) ) ;
+    return Math.Abs( numerator / normalLength ) ;
+  }
 }

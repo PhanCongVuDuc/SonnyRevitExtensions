@@ -54,8 +54,7 @@ public static class XYZDistanceExtensions
     Line line,
     XYZ direction )
   {
-    return SonnyRevitExtensions.Extensions.Geometries.GeometryExtensions.GetLengthOfPointToPlane( direction,
-      line.GetEndPoint( 0 ),
+    return direction.GetDistanceToPlane( line.GetEndPoint( 0 ),
       point ) ;
   }
 

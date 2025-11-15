@@ -152,8 +152,8 @@ public static class CurveExtensions
     var direction2 = curve2.Direction() ;
 
     var angle = direction1.AngleTo( direction2 ) ;
-    if ( Math.Abs( angle ) < 0.001
-         || Math.Abs( angle - Math.PI ) < 0.001 ) {
+    if ( Math.Abs( angle ) < ToleranceConstants.GeneralTolerance
+         || Math.Abs( angle - Math.PI ) < ToleranceConstants.GeneralTolerance ) {
       return curve1.Distance( curve2.GetEndPoint( 0 ) ) > 0 ;
     }
 
@@ -231,11 +231,11 @@ public static class CurveExtensions
     var angle = curve1.Direction()
       .AngleTo( curve2.Direction() ) ;
 
-    if ( Math.Abs( angle ) < 0.001
-         || Math.Abs( angle - Math.PI ) < 0.001 ) {
+    if ( Math.Abs( angle ) < ToleranceConstants.GeneralTolerance
+         || Math.Abs( angle - Math.PI ) < ToleranceConstants.GeneralTolerance ) {
       return Math.Abs( Distance( curve1,
                curve2.GetEndPoint( 0 ) ) )
-             < 0.001 ;
+             < ToleranceConstants.GeneralTolerance ;
     }
 
     return false ;
@@ -413,7 +413,7 @@ public static class CurveExtensions
         // If there is a match end->start, 
         // this is the next curve
 
-        if ( 0.001 > p.DistanceTo( endPoint ) ) {
+        if ( ToleranceConstants.GeneralTolerance > p.DistanceTo( endPoint ) ) {
           if ( i + 1 != j ) {
             ( curves[ i + 1 ], curves[ j ] ) = ( curves[ j ], curves[ i + 1 ] ) ;
           }
@@ -428,7 +428,7 @@ public static class CurveExtensions
         // If there is a match end->end, 
         // reverse the next curve
 
-        if ( 0.001 > p.DistanceTo( endPoint ) ) {
+        if ( ToleranceConstants.GeneralTolerance > p.DistanceTo( endPoint ) ) {
           if ( i + 1 == j ) {
             curves[ i + 1 ] = CreateReversedCurve( curves[ j ] ) ;
           }
@@ -490,7 +490,7 @@ public static class CurveExtensions
 
     var v = endPoint - startPoint ;
     var dxy = Math.Abs( v.X ) + Math.Abs( v.Y ) ;
-    var w = ( dxy > 0.0001 ) ? XYZ.BasisZ : XYZ.BasisY ;
+    var w = ( dxy > ToleranceConstants.StandardPrecision ) ? XYZ.BasisZ : XYZ.BasisY ;
     var norm = v.CrossProduct( w )
       .Normalize() ;
 
@@ -518,7 +518,7 @@ public static class CurveExtensions
       return null ;
     var v = curve.GetEndPoint( 0 ) - curve.GetEndPoint( 1 ) ;
     var dxy = Math.Abs( v.X ) + Math.Abs( v.Y ) ;
-    var w = ( dxy > 0.0001 ) ? XYZ.BasisZ : XYZ.BasisY ;
+    var w = ( dxy > ToleranceConstants.StandardPrecision ) ? XYZ.BasisZ : XYZ.BasisY ;
     var norm = v.CrossProduct( w )
       .Normalize() ;
     try {
@@ -812,7 +812,7 @@ public static class CurveExtensions
   /// <returns>True if the point is on the curve within tolerance, false otherwise.</returns>
   public static bool ContainsPoint( this Curve curve,
     XYZ origin,
-    double tolerance = 0.0001 )
+    double tolerance = ToleranceConstants.StandardPrecision )
   {
     var result = curve.Project( origin ) ;
     var distanceTo = result.XYZPoint.DistanceTo( origin ) ;
