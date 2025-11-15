@@ -1,6 +1,6 @@
 ﻿using SonnyRevitExtensions.Extensions.XYZs ;
 
-namespace SonnyRevitExtensions.Extensions.Faces ;
+namespace SonnyRevitExtensions.Extensions.GeometryObjects.Faces ;
 
 /// <summary>
 /// Extension methods for Face operations

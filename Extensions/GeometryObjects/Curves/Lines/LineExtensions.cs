@@ -1,6 +1,6 @@
-namespace SonnyRevitExtensions.Extensions.Curves.Lines ;
+namespace SonnyRevitExtensions.Extensions.GeometryObjects.Curves.Lines ;
 
-public static partial class LineExtensions
+public static class LineExtensions
 {
   /// <summary>
   /// Determines whether the specified point lies on this line.

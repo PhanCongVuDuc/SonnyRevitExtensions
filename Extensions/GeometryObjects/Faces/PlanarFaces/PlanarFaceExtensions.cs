@@ -1,6 +1,6 @@
 ﻿using SonnyRevitExtensions.Extensions.XYZs ;
 
-namespace SonnyRevitExtensions.Extensions.Faces.PlanarFaces ;
+namespace SonnyRevitExtensions.Extensions.GeometryObjects.Faces.PlanarFaces ;
 
 /// <summary>
 /// Extension methods for PlanarFace operations

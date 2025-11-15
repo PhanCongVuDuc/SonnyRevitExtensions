@@ -1,4 +1,4 @@
-namespace SonnyRevitExtensions.Extensions.Faces.CylindricalFaces ;
+namespace SonnyRevitExtensions.Extensions.GeometryObjects.Faces.CylindricalFaces ;
 
 /// <summary>
 /// Extension methods for CylindricalFace operations

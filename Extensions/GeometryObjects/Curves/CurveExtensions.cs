@@ -1,6 +1,6 @@
 using SonnyRevitExtensions.Extensions.XYZs ;
 
-namespace SonnyRevitExtensions.Extensions.Curves ;
+namespace SonnyRevitExtensions.Extensions.GeometryObjects.Curves ;
 
 public static class CurveExtensions
 {
