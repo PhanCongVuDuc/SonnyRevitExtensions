@@ -1,6 +1,6 @@
 ﻿using SonnyRevitExtensions.Extensions.XYZs ;
 
-namespace AlphaBIM ;
+namespace SonnyRevitExtensions.Extensions.Faces ;
 
 /// <summary>
 /// Extension methods for Face operations
@@ -46,7 +46,6 @@ public static class FaceExtensions
       return false ;
     }
 
-    // chỉ có nằm trong face khoảng cách mới bằng 0
     return Math.Abs( intersectionResult.Distance ) < 1e-3 ;
   }
 
