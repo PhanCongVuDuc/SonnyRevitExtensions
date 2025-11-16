@@ -12,17 +12,17 @@ public static class CylindricalFaceExtensions
     /// <returns>The radius if found from an arc edge, null otherwise</returns>
     public static double? GetRadius(this CylindricalFace cylindricalFace)
     {
-        CurveLoop? curveLoop = cylindricalFace.GetEdgesAsCurveLoops()
+        var curveLoop = cylindricalFace.GetEdgesAsCurveLoops()
             .FirstOrDefault() ;
         if (curveLoop == null)
         {
             return null ;
         }
 
-        CurveLoopIterator? curveLoopIterator = curveLoop.GetCurveLoopIterator() ;
+        var curveLoopIterator = curveLoop.GetCurveLoopIterator() ;
         while (curveLoopIterator.MoveNext())
         {
-            Curve? curve = curveLoopIterator.Current ;
+            var curve = curveLoopIterator.Current ;
             if (curve is not Arc arc)
             {
                 continue ;

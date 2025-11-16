@@ -13,9 +13,9 @@ public static class CurveExtensions
     public static double GetAngleBetweenCurves(this Curve curve1,
         Curve curve2)
     {
-        XYZ? c1Vector = curve1.GetEndPoint(1)
+        var c1Vector = curve1.GetEndPoint(1)
             .Subtract(curve1.GetEndPoint(0)) ;
-        XYZ? c2Vector = curve2.GetEndPoint(1)
+        var c2Vector = curve2.GetEndPoint(1)
             .Subtract(curve2.GetEndPoint(0)) ;
 
         return c2Vector.AngleTo(c1Vector) ;
@@ -28,8 +28,8 @@ public static class CurveExtensions
     /// <returns>The normalized direction vector.</returns>
     public static XYZ Direction(this Curve curve)
     {
-        XYZ? startPoint = curve.GetEndPoint(0) ;
-        XYZ? endPoint = curve.GetEndPoint(1) ;
+        var startPoint = curve.GetEndPoint(0) ;
+        var endPoint = curve.GetEndPoint(1) ;
 
         return (endPoint - startPoint).Normalize() ;
     }
@@ -43,8 +43,8 @@ public static class CurveExtensions
     public static XYZ? GetIntersection(this Curve curve1,
         Curve curve2)
     {
-        SetComparisonResult result = curve1.Intersect(curve2,
-            out IntersectionResultArray? results) ;
+        var result = curve1.Intersect(curve2,
+            out var results) ;
 
         if (result != SetComparisonResult.Overlap
             || results is not { Size: 1 })
@@ -70,12 +70,12 @@ public static class CurveExtensions
         using SubTransaction subTransaction = new(document) ;
         subTransaction.Start() ;
 
-        DetailCurve? detailCurve1 = document.Create.NewDetailCurve(document.ActiveView,
+        var detailCurve1 = document.Create.NewDetailCurve(document.ActiveView,
             curve1) ;
-        DetailCurve? detailCurve2 = document.Create.NewDetailCurve(document.ActiveView,
+        var detailCurve2 = document.Create.NewDetailCurve(document.ActiveView,
             curve2) ;
 
-        XYZ? result = GetIntersection(detailCurve1.GeometryCurve,
+        var result = GetIntersection(detailCurve1.GeometryCurve,
             detailCurve2.GeometryCurve) ;
         subTransaction.RollBack() ;
 
@@ -91,24 +91,24 @@ public static class CurveExtensions
     public static XYZ? GetExtendedIntersection(this Curve curve1,
         Curve curve2)
     {
-        XYZ direction1 = curve1.Direction() ;
-        XYZ direction2 = curve2.Direction() ;
+        var direction1 = curve1.Direction() ;
+        var direction2 = curve2.Direction() ;
 
-        double extensionDistance = 2000.0.FromMillimeters() ;
-        double backwardExtensionDistance = -extensionDistance ;
+        var extensionDistance = 2000.0.FromMillimeters() ;
+        var backwardExtensionDistance = -extensionDistance ;
 
-        XYZ? point1 = curve1.GetEndPoint(0)
+        var point1 = curve1.GetEndPoint(0)
             .Add(direction1.Multiply(backwardExtensionDistance)) ;
-        XYZ? point2 = curve1.GetEndPoint(1)
+        var point2 = curve1.GetEndPoint(1)
             .Add(direction1.Multiply(extensionDistance)) ;
-        Line? extendedCurve1 = Line.CreateBound(point1,
+        var extendedCurve1 = Line.CreateBound(point1,
             point2) ;
 
         point1 = curve2.GetEndPoint(0)
             .Add(direction2.Multiply(backwardExtensionDistance)) ;
         point2 = curve2.GetEndPoint(1)
             .Add(direction2.Multiply(extensionDistance)) ;
-        Line? extendedCurve2 = Line.CreateBound(point1,
+        var extendedCurve2 = Line.CreateBound(point1,
             point2) ;
 
         return GetIntersection(extendedCurve1,
@@ -126,8 +126,8 @@ public static class CurveExtensions
         Curve curve2,
         Document document)
     {
-        ModelLine? modelLine1 = curve1.CreateModelLine(document) ;
-        ModelLine? modelLine2 = curve2.CreateModelLine(document) ;
+        var modelLine1 = curve1.CreateModelLine(document) ;
+        var modelLine2 = curve2.CreateModelLine(document) ;
 
         if (modelLine1 == null
             || modelLine2 == null)
@@ -135,7 +135,7 @@ public static class CurveExtensions
             return false ;
         }
 
-        bool result = modelLine1.GeometryCurve.IsIntersecting(modelLine2.GeometryCurve) ;
+        var result = modelLine1.GeometryCurve.IsIntersecting(modelLine2.GeometryCurve) ;
 
         return result ;
     }
@@ -151,10 +151,10 @@ public static class CurveExtensions
     public static bool IsParallel(this Curve curve1,
         Curve curve2)
     {
-        XYZ direction1 = curve1.Direction() ;
-        XYZ direction2 = curve2.Direction() ;
+        var direction1 = curve1.Direction() ;
+        var direction2 = curve2.Direction() ;
 
-        double angle = direction1.AngleTo(direction2) ;
+        var angle = direction1.AngleTo(direction2) ;
         if (Math.Abs(angle) < ToleranceConstants.GeneralTolerance
             || Math.Abs(angle - Math.PI) < ToleranceConstants.GeneralTolerance)
         {
@@ -173,16 +173,16 @@ public static class CurveExtensions
     public static double DistanceToPointExtended(this Curve curve,
         XYZ point)
     {
-        XYZ direction = curve.Direction() ;
+        var direction = curve.Direction() ;
 
-        double extensionDistance = 2000.0.FromMillimeters() ;
-        double backwardExtensionDistance = -extensionDistance ;
+        var extensionDistance = 2000.0.FromMillimeters() ;
+        var backwardExtensionDistance = -extensionDistance ;
 
-        XYZ? start = curve.GetEndPoint(0)
+        var start = curve.GetEndPoint(0)
             .Add(direction.Multiply(backwardExtensionDistance)) ;
-        XYZ? end = curve.GetEndPoint(1)
+        var end = curve.GetEndPoint(1)
             .Add(direction.Multiply(extensionDistance)) ;
-        Line? extendedCurve = Line.CreateBound(start,
+        var extendedCurve = Line.CreateBound(start,
             end) ;
 
         return extendedCurve.Distance(point) ;
@@ -197,7 +197,7 @@ public static class CurveExtensions
     public static double Distance(this Curve curve,
         XYZ point)
     {
-        XYZ projection = curve.ProjectionOf(point) ;
+        var projection = curve.ProjectionOf(point) ;
         return Math.Abs((point - projection).GetLength()) ;
     }
 
@@ -211,13 +211,13 @@ public static class CurveExtensions
     public static XYZ ProjectionOf(this Curve curve,
         XYZ point)
     {
-        XYZ? startPoint = curve.GetEndPoint(0) ;
-        XYZ? endPoint = curve.GetEndPoint(1) ;
-        XYZ? vectorFromStartToPoint = point - startPoint ;
-        XYZ? directionVector = (endPoint - startPoint).Normalize() ;
+        var startPoint = curve.GetEndPoint(0) ;
+        var endPoint = curve.GetEndPoint(1) ;
+        var vectorFromStartToPoint = point - startPoint ;
+        var directionVector = (endPoint - startPoint).Normalize() ;
 
-        double scalarProjection = directionVector.DotProduct(vectorFromStartToPoint) ;
-        XYZ? projectedPoint = startPoint.Add(directionVector.Multiply(scalarProjection)) ;
+        var scalarProjection = directionVector.DotProduct(vectorFromStartToPoint) ;
+        var projectedPoint = startPoint.Add(directionVector.Multiply(scalarProjection)) ;
 
         return projectedPoint ;
     }
@@ -232,7 +232,7 @@ public static class CurveExtensions
     public static bool AreCollinear(this Curve curve1,
         Curve curve2)
     {
-        double angle = curve1.Direction()
+        var angle = curve1.Direction()
             .AngleTo(curve2.Direction()) ;
 
         if (Math.Abs(angle) < ToleranceConstants.GeneralTolerance
@@ -255,9 +255,9 @@ public static class CurveExtensions
     public static double GetMinimumDistanceToCurve(this Curve curve,
         Curve otherCurve)
     {
-        double e1 = Distance(otherCurve,
+        var e1 = Distance(otherCurve,
             curve.GetEndPoint(0)) ;
-        double e2 = Distance(otherCurve,
+        var e2 = Distance(otherCurve,
             curve.GetEndPoint(1)) ;
 
         return e1 > e2 ? e2 : e1 ;
@@ -274,21 +274,21 @@ public static class CurveExtensions
         Curve curve2,
         Curve targetCurve)
     {
-        XYZ endPointMinC1 = curve1.GetClosestEndPoint(targetCurve) ;
-        XYZ endPointMinC2 = curve2.GetClosestEndPoint(targetCurve) ;
+        var endPointMinC1 = curve1.GetClosestEndPoint(targetCurve) ;
+        var endPointMinC2 = curve2.GetClosestEndPoint(targetCurve) ;
 
-        XYZ projectionOfC1 = targetCurve.ProjectionOf(endPointMinC1) ;
-        XYZ projectionOfC2 = targetCurve.ProjectionOf(endPointMinC2) ;
+        var projectionOfC1 = targetCurve.ProjectionOf(endPointMinC1) ;
+        var projectionOfC2 = targetCurve.ProjectionOf(endPointMinC2) ;
 
-        XYZ? c1End0 = projectionOfC1.Subtract(targetCurve.GetEndPoint(0)) ;
-        XYZ? c2End0 = projectionOfC2.Subtract(targetCurve.GetEndPoint(0)) ;
+        var c1End0 = projectionOfC1.Subtract(targetCurve.GetEndPoint(0)) ;
+        var c2End0 = projectionOfC2.Subtract(targetCurve.GetEndPoint(0)) ;
 
-        XYZ? c1End1 = projectionOfC1.Subtract(targetCurve.GetEndPoint(1)) ;
-        XYZ? c2End1 = projectionOfC2.Subtract(targetCurve.GetEndPoint(1)) ;
+        var c1End1 = projectionOfC1.Subtract(targetCurve.GetEndPoint(1)) ;
+        var c2End1 = projectionOfC2.Subtract(targetCurve.GetEndPoint(1)) ;
 
-        bool equalEnd0 = c1End0.Normalize()
+        var equalEnd0 = c1End0.Normalize()
             .IsAlmostEqualTo(c2End0.Normalize()) ;
-        bool equalEnd1 = c1End1.Normalize()
+        var equalEnd1 = c1End1.Normalize()
             .IsAlmostEqualTo(c2End1.Normalize()) ;
 
         return equalEnd0 && equalEnd1 ;
@@ -303,9 +303,9 @@ public static class CurveExtensions
     public static XYZ GetClosestEndPoint(this Curve curve,
         Curve otherCurve)
     {
-        double e0 = Distance(otherCurve,
+        var e0 = Distance(otherCurve,
             curve.GetEndPoint(0)) ;
-        double e1 = Distance(otherCurve,
+        var e1 = Distance(otherCurve,
             curve.GetEndPoint(1)) ;
 
         return e0 > e1 ? curve.GetEndPoint(1) : curve.GetEndPoint(0) ;
@@ -320,11 +320,11 @@ public static class CurveExtensions
     public static Curve GetClosestCurve(this Curve curve,
         List<Curve> curves)
     {
-        double min = double.MaxValue ;
-        Curve cResult = curves.First() ;
-        foreach (Curve c in curves)
+        var min = double.MaxValue ;
+        var cResult = curves.First() ;
+        foreach (var c in curves)
         {
-            double d = GetMinimumDistanceToCurve(curve,
+            var d = GetMinimumDistanceToCurve(curve,
                 c) ;
             if (d < min)
             {
@@ -347,8 +347,8 @@ public static class CurveExtensions
     {
         try
         {
-            XYZ? start = thisCurve.GetEndPoint(0) ;
-            XYZ? end = thisCurve.GetEndPoint(1) ;
+            var start = thisCurve.GetEndPoint(0) ;
+            var end = thisCurve.GetEndPoint(1) ;
             return ContainsPoint(otherCurve,
                        start)
                    && ContainsPoint(otherCurve,
@@ -369,7 +369,7 @@ public static class CurveExtensions
     public static bool IsFullyContained(this Curve curve,
         List<Curve> curves)
     {
-        foreach (Curve curveTarget in curves)
+        foreach (var curveTarget in curves)
         {
             if (! IsFullyContained(curve,
                     curveTarget))
@@ -403,23 +403,23 @@ public static class CurveExtensions
     /// </summary>
     public static void SortCurvesContiguous(this IList<Curve> curves)
     {
-        int n = curves.Count ;
+        var n = curves.Count ;
 
         // Walk through each curve (after the first)
         // to match up the curves in order
 
-        for (int i = 0; i < n; ++i)
+        for (var i = 0; i < n; ++i)
         {
-            Curve curve = curves[i] ;
-            XYZ? endPoint = curve.GetEndPoint(1) ;
+            var curve = curves[i] ;
+            var endPoint = curve.GetEndPoint(1) ;
 
             // Find curve with start point = end point
 
-            bool found = i + 1 >= n ;
+            var found = i + 1 >= n ;
 
-            for (int j = i + 1; j < n; ++j)
+            for (var j = i + 1; j < n; ++j)
             {
-                XYZ? p = curves[j]
+                var p = curves[j]
                     .GetEndPoint(0) ;
 
                 // If there is a match end->start,
@@ -450,7 +450,7 @@ public static class CurveExtensions
                     }
                     else
                     {
-                        Curve tmp = curves[i + 1] ;
+                        var tmp = curves[i + 1] ;
                         curves[i + 1] = CreateReversedCurve(curves[j]) ;
                         curves[j] = tmp ;
                     }
@@ -512,17 +512,17 @@ public static class CurveExtensions
             return null ;
         }
 
-        XYZ? v = endPoint - startPoint ;
-        double dxy = Math.Abs(v.X) + Math.Abs(v.Y) ;
-        XYZ? w = dxy > ToleranceConstants.StandardPrecision ? XYZ.BasisZ : XYZ.BasisY ;
-        XYZ? norm = v.CrossProduct(w)
+        var v = endPoint - startPoint ;
+        var dxy = Math.Abs(v.X) + Math.Abs(v.Y) ;
+        var w = dxy > ToleranceConstants.StandardPrecision ? XYZ.BasisZ : XYZ.BasisY ;
+        var norm = v.CrossProduct(w)
             .Normalize() ;
 
-        Plane? plane = Plane.CreateByNormalAndOrigin(norm,
+        var plane = Plane.CreateByNormalAndOrigin(norm,
             startPoint) ;
-        SketchPlane? sketchPlane = SketchPlane.Create(doc,
+        var sketchPlane = SketchPlane.Create(doc,
             plane) ;
-        Line? line = Line.CreateBound(startPoint,
+        var line = Line.CreateBound(startPoint,
             endPoint) ;
 
         return (ModelLine)doc.Create.NewModelCurve(line,
@@ -543,16 +543,16 @@ public static class CurveExtensions
             return null ;
         }
 
-        XYZ? v = curve.GetEndPoint(0) - curve.GetEndPoint(1) ;
-        double dxy = Math.Abs(v.X) + Math.Abs(v.Y) ;
-        XYZ? w = dxy > ToleranceConstants.StandardPrecision ? XYZ.BasisZ : XYZ.BasisY ;
-        XYZ? norm = v.CrossProduct(w)
+        var v = curve.GetEndPoint(0) - curve.GetEndPoint(1) ;
+        var dxy = Math.Abs(v.X) + Math.Abs(v.Y) ;
+        var w = dxy > ToleranceConstants.StandardPrecision ? XYZ.BasisZ : XYZ.BasisY ;
+        var norm = v.CrossProduct(w)
             .Normalize() ;
         try
         {
-            Plane? plane = Plane.CreateByNormalAndOrigin(norm,
+            var plane = Plane.CreateByNormalAndOrigin(norm,
                 curve.GetEndPoint(1)) ;
-            SketchPlane? sketchPlane = SketchPlane.Create(doc,
+            var sketchPlane = SketchPlane.Create(doc,
                 plane) ;
             return doc.Create.NewModelCurve(curve,
                 sketchPlane) as ModelLine ;
@@ -588,13 +588,13 @@ public static class CurveExtensions
             pointsOnLines.Add(line.GetEndPoint(0)) ;
             pointsOnLines.Add(line.GetEndPoint(1)) ;
 
-            XYZ direction = line.Direction() ;
-            double r = Math.Round(line.Length / distance.FromMillimeters(),
+            var direction = line.Direction() ;
+            var r = Math.Round(line.Length / distance.FromMillimeters(),
                 0) ;
 
-            for (int i = 1; i < r; i++)
+            for (var i = 1; i < r; i++)
             {
-                XYZ? nextPoint = line.GetEndPoint(0)
+                var nextPoint = line.GetEndPoint(0)
                     .Add(direction.Multiply(distance.FromMillimeters() * i)) ;
                 pointsOnLines.Add(nextPoint) ;
             }
@@ -618,9 +618,9 @@ public static class CurveExtensions
     /// <returns>A new list with duplicate curves removed.</returns>
     public static List<Curve> RemoveDuplicateCurves(this List<Curve> curves)
     {
-        foreach (Curve curve in curves)
+        foreach (var curve in curves)
         {
-            List<Curve> allCurveToCheck = curves.Except([curve])
+            var allCurveToCheck = curves.Except([curve])
                 .ToList() ;
             if (! curve.IsFullyContained(allCurveToCheck))
             {
@@ -639,9 +639,9 @@ public static class CurveExtensions
     /// </summary>
     public static CurveLoop CreateCurveLoop(this List<XYZ> points)
     {
-        int n = points.Count ;
+        var n = points.Count ;
         CurveLoop curveLoop = new() ;
-        for (int i = 1; i < n; ++i)
+        for (var i = 1; i < n; ++i)
         {
             curveLoop.Append(Line.CreateBound(points[i - 1],
                 points[i])) ;
@@ -693,8 +693,8 @@ public static class CurveExtensions
     {
         List<XYZ> xyzes = new() ;
 
-        SetComparisonResult setComparisonResult = curve.Intersect(curveOther,
-            out IntersectionResultArray intersectionResultArray) ;
+        var setComparisonResult = curve.Intersect(curveOther,
+            out var intersectionResultArray) ;
 
         if (setComparisonResult == SetComparisonResult.Disjoint
             || intersectionResultArray == null)
@@ -702,9 +702,9 @@ public static class CurveExtensions
             return xyzes ;
         }
 
-        for (int i = 0; i < intersectionResultArray.Size; i++)
+        for (var i = 0; i < intersectionResultArray.Size; i++)
         {
-            IntersectionResult? intersectionResult = intersectionResultArray.get_Item(i) ;
+            var intersectionResult = intersectionResultArray.get_Item(i) ;
             xyzes.Add(intersectionResult.XYZPoint) ;
         }
 
@@ -720,7 +720,7 @@ public static class CurveExtensions
     public static bool AreSameDirection(this Curve curve,
         Curve curveOther)
     {
-        SetComparisonResult setComparisonResult = curve.Intersect(curveOther,
+        var setComparisonResult = curve.Intersect(curveOther,
             out _) ;
 
         return setComparisonResult == SetComparisonResult.Equal ;
@@ -758,7 +758,7 @@ public static class CurveExtensions
     public static bool IsIntersecting(this Curve curve,
         Curve curveOther)
     {
-        List<XYZ> intersectCurve = curve.GetIntersectionPoints(curveOther) ;
+        var intersectCurve = curve.GetIntersectionPoints(curveOther) ;
         return intersectCurve.Count > 0 ;
     }
 
@@ -771,7 +771,7 @@ public static class CurveExtensions
     public static bool IsIntersecting(this List<Curve> curves,
         List<Curve> curvesOther)
     {
-        List<XYZ> intersectCurve = curves.GetIntersectionPoints(curvesOther) ;
+        var intersectCurve = curves.GetIntersectionPoints(curvesOther) ;
         return intersectCurve.Count > 0 ;
     }
 
@@ -807,7 +807,7 @@ public static class CurveExtensions
 
         if (curve is Arc arc)
         {
-            List<XYZ> xyzes = arc.GetXYZPoints() ;
+            var xyzes = arc.GetXYZPoints() ;
             XYZ end0 = new(xyzes[0].X,
                 xyzes[0].Y,
                 elevation) ;
@@ -837,9 +837,9 @@ public static class CurveExtensions
     public static bool IsContainedIn(this Curve curve,
         Curve curveOther)
     {
-        Curve defaultCurve = curve.ProjectToElevation(curveOther.GetEndPoint(0)
+        var defaultCurve = curve.ProjectToElevation(curveOther.GetEndPoint(0)
             .Z) ;
-        SetComparisonResult setComparisonResult = defaultCurve.Intersect(curveOther) ;
+        var setComparisonResult = defaultCurve.Intersect(curveOther) ;
 
         return setComparisonResult == SetComparisonResult.Equal ;
     }
@@ -855,8 +855,8 @@ public static class CurveExtensions
         XYZ origin,
         double tolerance = ToleranceConstants.StandardPrecision)
     {
-        IntersectionResult? result = curve.Project(origin) ;
-        double distanceTo = result.XYZPoint.DistanceTo(origin) ;
+        var result = curve.Project(origin) ;
+        var distanceTo = result.XYZPoint.DistanceTo(origin) ;
         return distanceTo <= tolerance ;
     }
 
@@ -881,7 +881,7 @@ public static class CurveExtensions
         ref int indexResult,
         XYZ origin)
     {
-        foreach (Curve curve in curves)
+        foreach (var curve in curves)
         {
             if (! curve.ContainsPoint(origin))
             {
@@ -904,20 +904,20 @@ public static class CurveExtensions
     public static List<Curve> MergeConnectedCurves(this List<Curve> curves)
     {
         List<Curve> newCurves = new() ;
-        for (int i = 0; i < curves.Count; i++)
+        for (var i = 0; i < curves.Count; i++)
         {
-            Curve curve = curves[i] ;
-            Curve? curvejoin = curves.FirstOrDefault(c => c.Intersect(curve) == SetComparisonResult.Subset) ;
+            var curve = curves[i] ;
+            var curvejoin = curves.FirstOrDefault(c => c.Intersect(curve) == SetComparisonResult.Subset) ;
             if (curvejoin != null)
             {
                 curve.Intersect(curvejoin,
-                    out IntersectionResultArray? resultArray) ;
-                XYZ? point1 = resultArray.get_Item(0)
+                    out var resultArray) ;
+                var point1 = resultArray.get_Item(0)
                     .XYZPoint
                     .IsAlmostEqualTo(curve.GetEndPoint(0))
                     ? curve.GetEndPoint(1)
                     : curve.GetEndPoint(0) ;
-                XYZ? point2 = resultArray.get_Item(0)
+                var point2 = resultArray.get_Item(0)
                     .XYZPoint
                     .IsAlmostEqualTo(curvejoin.GetEndPoint(0))
                     ? curvejoin.GetEndPoint(1)

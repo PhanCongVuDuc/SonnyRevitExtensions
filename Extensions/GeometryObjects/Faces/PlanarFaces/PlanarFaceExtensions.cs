@@ -26,7 +26,7 @@ public static class PlanarFaceExtensions
     public static bool IsSamePlanarFace(this PlanarFace planarFace1,
         PlanarFace planarFace2)
     {
-        FaceIntersectionFaceResult faceIntersectionFaceResult = planarFace1.Intersect(planarFace2,
+        var faceIntersectionFaceResult = planarFace1.Intersect(planarFace2,
             out _) ;
 
         if (faceIntersectionFaceResult == FaceIntersectionFaceResult.Intersecting)
@@ -34,7 +34,7 @@ public static class PlanarFaceExtensions
             return false ;
         }
 
-        bool isParallelPlanarFace = planarFace1.IsParallelPlanarFace(planarFace2) ;
+        var isParallelPlanarFace = planarFace1.IsParallelPlanarFace(planarFace2) ;
 
         // Check if two planar faces have the same normal direction
         if (! (planarFace1.FaceNormal.IsAlmostEqualTo(planarFace2.FaceNormal)
@@ -55,7 +55,7 @@ public static class PlanarFaceExtensions
     public static bool IsParallelPlanarFace(this PlanarFace planarFace1,
         PlanarFace planarFace2)
     {
-        FaceIntersectionFaceResult faceIntersectionFaceResult = planarFace1.Intersect(planarFace2,
+        var faceIntersectionFaceResult = planarFace1.Intersect(planarFace2,
             out _) ;
 
         if (faceIntersectionFaceResult == FaceIntersectionFaceResult.Intersecting)
@@ -70,7 +70,7 @@ public static class PlanarFaceExtensions
             return false ;
         }
 
-        double lengthOfPointToPlane = planarFace1.Origin.GetLengthOfPointToPlane(planarFace2.FaceNormal,
+        var lengthOfPointToPlane = planarFace1.Origin.GetLengthOfPointToPlane(planarFace2.FaceNormal,
             planarFace2.Origin) ;
 
         return lengthOfPointToPlane >= ToleranceConstants.HighPrecision ;
@@ -85,17 +85,17 @@ public static class PlanarFaceExtensions
     {
         List<XYZ> xyzs = new() ;
 
-        CurveLoop? curveLoop = planarFace.GetEdgesAsCurveLoops()
+        var curveLoop = planarFace.GetEdgesAsCurveLoops()
             .FirstOrDefault() ;
         if (curveLoop == null)
         {
             return xyzs ;
         }
 
-        CurveLoopIterator? curveLoopIterator = curveLoop.GetCurveLoopIterator() ;
+        var curveLoopIterator = curveLoop.GetCurveLoopIterator() ;
         while (curveLoopIterator.MoveNext())
         {
-            Curve? curve = curveLoopIterator.Current ;
+            var curve = curveLoopIterator.Current ;
             if (curve is null)
             {
                 continue ;

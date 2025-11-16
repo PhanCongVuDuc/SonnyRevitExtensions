@@ -1,3 +1,5 @@
+using MoreLinq ;
+
 namespace SonnyRevitExtensions.Extensions ;
 
 /// <summary>
@@ -32,8 +34,8 @@ public static class LinqExtensions
         return Enumerable.DistinctBy(source,
             keySelector) ;
 #else
-    // Use MoreLINQ.DistinctBy for .NET Framework 4.8 (Revit 2021-2024)
-    return MoreLinq.MoreEnumerable.DistinctBy( source, keySelector ) ;
+        // Use MoreLINQ.DistinctBy for .NET Framework 4.8 (Revit 2021-2024)
+        return MoreEnumerable.DistinctBy(source, keySelector) ;
 #endif
     }
 }

@@ -61,7 +61,7 @@ public static class XYZComparisonExtensions
         }
 
         // Vector from lineStartPoint to lineEndPoint
-        XYZ? vector = lineEndPoint - lineStartPoint ;
+        var vector = lineEndPoint - lineStartPoint ;
 
         // If lineEndPoint == lineStartPoint, it's on the line
         if (vector.GetLength() < tolerance)
@@ -70,11 +70,11 @@ public static class XYZComparisonExtensions
         }
 
         // Normalize direction
-        XYZ? normalizedDir = direction.Normalize() ;
+        var normalizedDir = direction.Normalize() ;
 
         // Cross product to check if vectors are parallel
-        XYZ? crossProduct = vector.CrossProduct(normalizedDir) ;
-        double distance = crossProduct.GetLength() ;
+        var crossProduct = vector.CrossProduct(normalizedDir) ;
+        var distance = crossProduct.GetLength() ;
 
         return distance < tolerance ;
     }

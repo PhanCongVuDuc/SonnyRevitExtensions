@@ -11,7 +11,7 @@ public static class LineExtensions
     public static bool ContainsPoint(this Line line,
         XYZ xyz)
     {
-        IntersectionResult? intersectionResult = line.Project(xyz) ;
+        var intersectionResult = line.Project(xyz) ;
         return intersectionResult.XYZPoint.IsAlmostEqualTo(xyz) ;
     }
 
@@ -26,8 +26,8 @@ public static class LineExtensions
         XYZ direct,
         double offset)
     {
-        XYZ? point1 = line.GetEndPoint(0) + direct * offset ;
-        XYZ? point2 = line.GetEndPoint(1) + direct * offset ;
+        var point1 = line.GetEndPoint(0) + direct * offset ;
+        var point2 = line.GetEndPoint(1) + direct * offset ;
         return Line.CreateBound(point1,
             point2) ;
     }
@@ -55,11 +55,11 @@ public static class LineExtensions
     public static bool Contains(this Line line,
         XYZ point)
     {
-        XYZ? a = line.GetEndPoint(0) ; // line start point
-        XYZ? b = line.GetEndPoint(1) ; // line end point
-        double f = a.DistanceTo(b) ; // distance between focal points
-        double da = a.DistanceTo(point) ;
-        double db = point.DistanceTo(b) ;
+        var a = line.GetEndPoint(0) ; // line start point
+        var b = line.GetEndPoint(1) ; // line end point
+        var f = a.DistanceTo(b) ; // distance between focal points
+        var da = a.DistanceTo(point) ;
+        var db = point.DistanceTo(b) ;
         // da + db is always greater or equal f
         return (da + db - f) * f < ToleranceConstants.GeneralTolerance ;
     }

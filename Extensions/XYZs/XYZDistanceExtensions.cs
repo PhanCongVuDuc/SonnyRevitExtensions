@@ -64,15 +64,15 @@ public static class XYZDistanceExtensions
         XYZ planeOrigin)
     {
         // Create plane
-        Plane? plane = Plane.CreateByNormalAndOrigin(planeNormal,
+        var plane = Plane.CreateByNormalAndOrigin(planeNormal,
             planeOrigin) ;
-        double d = plane.Normal.DotProduct(-plane.Origin) ;
+        var d = plane.Normal.DotProduct(-plane.Origin) ;
 
         // Calculate numerator
-        double numerator = Math.Abs(plane.Normal.DotProduct(targetPoint) + d) ;
+        var numerator = Math.Abs(plane.Normal.DotProduct(targetPoint) + d) ;
 
         // Calculate denominator
-        double denominator = Math.Sqrt(plane.Normal.DotProduct(plane.Normal)) ;
+        var denominator = Math.Sqrt(plane.Normal.DotProduct(plane.Normal)) ;
 
         return numerator / denominator ;
     }

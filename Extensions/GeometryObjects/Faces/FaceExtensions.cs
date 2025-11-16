@@ -35,7 +35,7 @@ public static class FaceExtensions
     public static bool IsPointInside(this Face face,
         XYZ point)
     {
-        IntersectionResult? intersectionResult = face.Project(point) ;
+        var intersectionResult = face.Project(point) ;
 
         // intersectionResult== null lí do là điểm XYZ không nằm trong không gian face
         if (intersectionResult == null)
@@ -55,8 +55,8 @@ public static class FaceExtensions
     public static List<XYZ> GetIntersectionPoints(this Face face1,
         Face face2)
     {
-        FaceIntersectionFaceResult faceIntersectionFaceResult = face1.Intersect(face2,
-            out Curve curve) ;
+        var faceIntersectionFaceResult = face1.Intersect(face2,
+            out var curve) ;
 
         if (faceIntersectionFaceResult == FaceIntersectionFaceResult.NonIntersecting)
         {
@@ -66,10 +66,10 @@ public static class FaceExtensions
         IList<XYZ>? list = curve.Tessellate() ;
 
         List<XYZ> listXyzes = new() ;
-        foreach (XYZ xyz in list)
+        foreach (var xyz in list)
         {
-            bool pointInsideInFace1 = face1.IsPointInside(xyz) ;
-            bool pointInsideInFace2 = face2.IsPointInside(xyz) ;
+            var pointInsideInFace1 = face1.IsPointInside(xyz) ;
+            var pointInsideInFace2 = face2.IsPointInside(xyz) ;
 
             if (pointInsideInFace1 && pointInsideInFace2)
             {
@@ -112,16 +112,16 @@ public static class FaceExtensions
     public static List<XYZ> GetIntersectionPoints(this Face face,
         Line line)
     {
-        SetComparisonResult comparisonResult = face.Intersect(line,
-            out IntersectionResultArray results) ;
+        var comparisonResult = face.Intersect(line,
+            out var results) ;
 
         List<XYZ> listXyzes = new() ;
         if (comparisonResult == SetComparisonResult.Overlap)
         {
-            for (int i = 0; i < results.Size; i++)
+            for (var i = 0; i < results.Size; i++)
             {
-                IntersectionResult? intersectionResult = results.get_Item(i) ;
-                XYZ? intersectionResultXyzPoint = intersectionResult.XYZPoint ;
+                var intersectionResult = results.get_Item(i) ;
+                var intersectionResultXyzPoint = intersectionResult.XYZPoint ;
                 listXyzes.Add(intersectionResultXyzPoint) ;
             }
         }
@@ -152,10 +152,10 @@ public static class FaceExtensions
             return planar.FaceNormal ;
         }
 
-        BoundingBoxUV? boundingBox = face.GetBoundingBox() ;
-        UV? uv = (boundingBox.Max + boundingBox.Min) / 2.0 ;
+        var boundingBox = face.GetBoundingBox() ;
+        var uv = (boundingBox.Max + boundingBox.Min) / 2.0 ;
 
-        XYZ? computeNormal = face.ComputeNormal(uv) ;
+        var computeNormal = face.ComputeNormal(uv) ;
 
         return computeNormal ;
     }
@@ -167,12 +167,12 @@ public static class FaceExtensions
     /// <returns>The origin point if found inside the face, null otherwise</returns>
     public static XYZ? GetOriginInFace(this Face face)
     {
-        BoundingBoxUV? boundingBox = face.GetBoundingBox() ;
-        UV? boundingBoxMax = boundingBox.Max ;
-        UV? boundingBoxMin = boundingBox.Min ;
+        var boundingBox = face.GetBoundingBox() ;
+        var boundingBoxMax = boundingBox.Max ;
+        var boundingBoxMin = boundingBox.Min ;
 
-        UV? xyz = boundingBoxMax + boundingBoxMin ;
-        UV? uv = xyz / 2 ;
+        var xyz = boundingBoxMax + boundingBoxMin ;
+        var uv = xyz / 2 ;
 
         XYZ? result = null ;
         if (face.IsInside(uv))
@@ -191,9 +191,9 @@ public static class FaceExtensions
                 uvTempFar = boundingBoxMin ;
             }
 
-            for (int i = 1; i < 99; i++)
+            for (var i = 1; i < 99; i++)
             {
-                double temp = i / 100d ;
+                var temp = i / 100d ;
 
                 UV tempUv = new(uvTempFar.U * temp,
                     uvTempFar.V * temp) ;
@@ -215,12 +215,12 @@ public static class FaceExtensions
     /// <returns>The origin point at the center of the face's bounding box</returns>
     public static XYZ GetOrigin(this Face face)
     {
-        BoundingBoxUV? boundingBox = face.GetBoundingBox() ;
-        UV? boundingBoxMax = boundingBox.Max ;
-        UV? boundingBoxMin = boundingBox.Min ;
+        var boundingBox = face.GetBoundingBox() ;
+        var boundingBoxMax = boundingBox.Max ;
+        var boundingBoxMin = boundingBox.Min ;
 
-        UV? xyz = boundingBoxMax + boundingBoxMin ;
-        UV? uv = xyz / 2 ;
+        var xyz = boundingBoxMax + boundingBoxMin ;
+        var uv = xyz / 2 ;
 
         return face.Evaluate(uv) ;
     }
@@ -233,7 +233,7 @@ public static class FaceExtensions
     public static List<XYZ> GetPoints(this Face face)
     {
         List<XYZ> listXyzes = new() ;
-        foreach (Curve curve in face.GetCurves())
+        foreach (var curve in face.GetCurves())
         {
             listXyzes.AddRange(curve.Tessellate()) ;
         }
@@ -259,7 +259,7 @@ public static class FaceExtensions
     {
         List<Curve> listCurves = new() ;
 
-        EdgeArrayArray? edgeArrayArray = face.EdgeLoops ;
+        var edgeArrayArray = face.EdgeLoops ;
         foreach (EdgeArray edgeArray in edgeArrayArray)
         {
             foreach (Edge edge in edgeArray)
@@ -280,7 +280,7 @@ public static class FaceExtensions
     {
         List<Edge> listEdges = new() ;
 
-        EdgeArrayArray? edgeArrayArray = face.EdgeLoops ;
+        var edgeArrayArray = face.EdgeLoops ;
         foreach (EdgeArray edgeArray in edgeArrayArray)
         {
             foreach (Edge edge in edgeArray)
@@ -301,10 +301,10 @@ public static class FaceExtensions
     public static Edge? GetEdge(this Face face,
         XYZ direction)
     {
-        List<Edge> listEdges = face.GetEdges() ;
-        foreach (Edge listEdge in listEdges)
+        var listEdges = face.GetEdges() ;
+        foreach (var listEdge in listEdges)
         {
-            Curve? curve = listEdge.AsCurve() ;
+            var curve = listEdge.AsCurve() ;
             if (curve is Line line)
             {
                 if (line.Direction.IsAlmostEqualTo(direction))
@@ -326,8 +326,8 @@ public static class FaceExtensions
     public static XYZ? GetIntersection(this Face face,
         Curve curve)
     {
-        SetComparisonResult result = face.Intersect(curve,
-            out IntersectionResultArray? results) ;
+        var result = face.Intersect(curve,
+            out var results) ;
 
         if (result != SetComparisonResult.Overlap
             || results is not { Size: 1 })

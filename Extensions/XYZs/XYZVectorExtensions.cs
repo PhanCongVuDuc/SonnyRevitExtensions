@@ -27,7 +27,7 @@ public static class XYZVectorExtensions
     public static bool IsSameDirection(this XYZ firstVector,
         XYZ secondVector)
     {
-        double dot = firstVector.DotProduct(secondVector) ;
+        var dot = firstVector.DotProduct(secondVector) ;
         return dot.Equals(1) ;
     }
 
@@ -40,7 +40,7 @@ public static class XYZVectorExtensions
     public static bool IsPerpendicular(this XYZ firstVector,
         XYZ secondVector)
     {
-        double dot = firstVector.DotProduct(secondVector) ;
+        var dot = firstVector.DotProduct(secondVector) ;
         return dot.Equals(0) ;
     }
 
@@ -106,8 +106,8 @@ public static class XYZVectorExtensions
     public static double GetClockwiseAngleBetweenVectors(this XYZ firstVector,
         XYZ secondVector)
     {
-        double dot = secondVector.X * firstVector.X + secondVector.Y * firstVector.Y ;
-        double det = secondVector.Y * firstVector.X - secondVector.X * firstVector.Y ;
+        var dot = secondVector.X * firstVector.X + secondVector.Y * firstVector.Y ;
+        var det = secondVector.Y * firstVector.X - secondVector.X * firstVector.Y ;
         return -Math.Atan2(det,
             dot) ;
     }

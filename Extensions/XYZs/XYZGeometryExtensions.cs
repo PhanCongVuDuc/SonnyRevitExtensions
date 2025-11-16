@@ -14,10 +14,10 @@ public static class XYZGeometryExtensions
     public static bool IsPointInsidePolygon(this XYZ point,
         List<XYZ> polygonVertices)
     {
-        double angle = 0.0 ;
-        for (int i = 0; i < polygonVertices.Count; i++)
+        var angle = 0.0 ;
+        for (var i = 0; i < polygonVertices.Count; i++)
         {
-            int j = i == polygonVertices.Count - 1 ? 0 : i + 1 ;
+            var j = i == polygonVertices.Count - 1 ? 0 : i + 1 ;
             XYZ a = new(polygonVertices[i].X,
                 polygonVertices[i].Y,
                 0) ;
@@ -28,10 +28,10 @@ public static class XYZGeometryExtensions
                 polygonVertices[j].Y,
                 0) ;
 
-            XYZ? ba = Line.CreateBound(b,
+            var ba = Line.CreateBound(b,
                     a)
                 .Direction ;
-            XYZ? bc = Line.CreateBound(b,
+            var bc = Line.CreateBound(b,
                     c)
                 .Direction ;
             angle += ba.AngleTo(bc) ;
@@ -56,7 +56,7 @@ public static class XYZGeometryExtensions
         double testy)
     {
         int i, j ;
-        bool c = false ;
+        var c = false ;
         for (i = 0, j = nvert - 1; i < nvert; j = i++)
         {
             if (verty[i] > testy != verty[j] > testy
@@ -77,8 +77,8 @@ public static class XYZGeometryExtensions
     /// <returns>Centroid point</returns>
     public static XYZ GetCentroid(this List<XYZ> sources)
     {
-        XYZ? centroid = sources[0] ;
-        for (int i = 1; i < sources.Count; i++)
+        var centroid = sources[0] ;
+        for (var i = 1; i < sources.Count; i++)
         {
             centroid = centroid.Add(sources[i]) ;
         }
@@ -97,8 +97,8 @@ public static class XYZGeometryExtensions
         XYZ secondPoint,
         XYZ thirdPoint)
     {
-        XYZ? v12 = secondPoint - firstPoint ;
-        XYZ? v13 = thirdPoint - firstPoint ;
+        var v12 = secondPoint - firstPoint ;
+        var v13 = thirdPoint - firstPoint ;
         return v12.CrossProduct(v13)
                    .Z
                < 0 ;
@@ -132,7 +132,7 @@ public static class XYZGeometryExtensions
             0).Normalize() ;
 
         // Calculate determinants
-        double denominator =
+        var denominator =
             firstLineDirection.X * secondLineDirection.Y - firstLineDirection.Y * secondLineDirection.X ;
 
         if (Math.Abs(denominator) < ToleranceConstants.HighPrecision)
@@ -140,9 +140,9 @@ public static class XYZGeometryExtensions
             return null ;
         }
 
-        double t = ((secondLinePoint.X - firstLinePoint.X) * secondLineDirection.Y
-                    - (secondLinePoint.Y - firstLinePoint.Y) * secondLineDirection.X)
-                   / denominator ;
+        var t = ((secondLinePoint.X - firstLinePoint.X) * secondLineDirection.Y
+                 - (secondLinePoint.Y - firstLinePoint.Y) * secondLineDirection.X)
+                / denominator ;
         XYZ intersectionPoint = new(firstLinePoint.X + t * firstLineDirection.X,
             firstLinePoint.Y + t * firstLineDirection.Y,
             0) ;
@@ -161,8 +161,8 @@ public static class XYZGeometryExtensions
         XYZ second,
         XYZ third)
     {
-        XYZ? vector1 = first - second ;
-        XYZ? vector2 = third - second ;
+        var vector1 = first - second ;
+        var vector2 = third - second ;
 
         // Convert to 2D
         vector1 = new XYZ(vector1.X,
@@ -172,7 +172,7 @@ public static class XYZGeometryExtensions
             vector2.Y,
             0) ;
 
-        double dotProduct = vector1.DotProduct(vector2) ;
+        var dotProduct = vector1.DotProduct(vector2) ;
         return dotProduct > 0 ;
     }
 
@@ -189,9 +189,9 @@ public static class XYZGeometryExtensions
         XYZ testPoint,
         double tolerance = ToleranceConstants.GeneralTolerance)
     {
-        double distanceLine = lineStartPoint.DistanceTo2D(lineEndPoint) ;
-        double distanceToFrom = lineStartPoint.DistanceTo2D(testPoint) ;
-        double distanceToEnd = lineEndPoint.DistanceTo2D(testPoint) ;
+        var distanceLine = lineStartPoint.DistanceTo2D(lineEndPoint) ;
+        var distanceToFrom = lineStartPoint.DistanceTo2D(testPoint) ;
+        var distanceToEnd = lineEndPoint.DistanceTo2D(testPoint) ;
         return Math.Abs(distanceLine - distanceToFrom - distanceToEnd) < tolerance ;
     }
 
@@ -208,9 +208,9 @@ public static class XYZGeometryExtensions
         XYZ testPoint,
         double tolerance = ToleranceConstants.GeneralTolerance)
     {
-        double distanceLine = lineStartPoint.DistanceTo(lineEndPoint) ;
-        double distanceToFrom = lineStartPoint.DistanceTo(testPoint) ;
-        double distanceToEnd = lineEndPoint.DistanceTo(testPoint) ;
+        var distanceLine = lineStartPoint.DistanceTo(lineEndPoint) ;
+        var distanceToFrom = lineStartPoint.DistanceTo(testPoint) ;
+        var distanceToEnd = lineEndPoint.DistanceTo(testPoint) ;
         return Math.Abs(distanceLine - distanceToFrom - distanceToEnd) < tolerance ;
     }
 
@@ -225,12 +225,12 @@ public static class XYZGeometryExtensions
         XYZ originOfPlane,
         XYZ anyPoint)
     {
-        Plane? plane = Plane.CreateByNormalAndOrigin(normalOfPlane,
+        var plane = Plane.CreateByNormalAndOrigin(normalOfPlane,
             originOfPlane) ;
-        double planeConstant = plane.Normal.DotProduct(-plane.Origin) ;
-        double numerator = plane.Normal.DotProduct(anyPoint) + planeConstant ;
+        var planeConstant = plane.Normal.DotProduct(-plane.Origin) ;
+        var numerator = plane.Normal.DotProduct(anyPoint) + planeConstant ;
 
-        double normalLength = Math.Sqrt(plane.Normal.DotProduct(plane.Normal)) ;
+        var normalLength = Math.Sqrt(plane.Normal.DotProduct(plane.Normal)) ;
         return Math.Abs(numerator / normalLength) ;
     }
 }
