@@ -38,7 +38,6 @@ public static class XYZDistanceExtensions
         Line line) =>
         line.Distance(point) ;
 
-    // Todo: will fix soon
     /// <summary>
     ///     Calculates distance from a point to a line using plane distance calculation
     /// </summary>
