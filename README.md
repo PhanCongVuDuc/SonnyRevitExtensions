@@ -4,23 +4,26 @@ Open-source library providing extension methods for Autodesk Revit API to simpli
 
 ## About
 
-This library was originally written in 2021 as part of the AlphaBIM project. This was during my early days of coding, so please bear with me if there are bugs or issues with the methods.
+This library was originally written in 2021 as part of the AlphaBIM project. This was during my early days of coding, so
+please bear with me if there are bugs or issues with the methods.
 
-Starting from November 13, 2025, I decided to open-source the code I have written, including these extension methods, rather than letting it sit unused for years. While these methods have been in use for some time, they can be improved and refined through community contributions and feedback.
+Starting from November 13, 2025, I decided to open-source the code I have written, including these extension methods,
+rather than letting it sit unused for years. While these methods have been in use for some time, they can be improved
+and refined through community contributions and feedback.
 
 ## Features
 
 - Extension method style API for Revit classes
 - **XYZ Extensions** (`Extensions/XYZs/`)
-  - `XYZComparisonExtensions`, `XYZDistanceExtensions`, `XYZGeometryExtensions`
-  - `XYZTransformExtensions`, `XYZUtilityExtensions`, `XYZVectorExtensions`
+    - `XYZComparisonExtensions`, `XYZDistanceExtensions`, `XYZGeometryExtensions`
+    - `XYZTransformExtensions`, `XYZUtilityExtensions`, `XYZVectorExtensions`
 - **Curve Extensions** (`Extensions/GeometryObjects/Curves/`)
-  - `CurveExtensions`, `LineExtensions`
+    - `CurveExtensions`, `LineExtensions`
 - **Face Extensions** (`Extensions/GeometryObjects/Faces/`)
-  - `FaceExtensions`, `PlanarFaceExtensions`, `CylindricalFaceExtensions`
+    - `FaceExtensions`, `PlanarFaceExtensions`, `CylindricalFaceExtensions`
 - **Other Extensions**
-  - `ToleranceConstants` - Predefined tolerance values for geometric comparisons
-  - `LinqExtensions` - Additional LINQ operations
+    - `ToleranceConstants` - Predefined tolerance values for geometric comparisons
+    - `LinqExtensions` - Additional LINQ operations
 - Supports Revit 2021-2026 (.NET Framework 4.8 / .NET 8.0)
 
 ## Installation
@@ -92,6 +95,7 @@ double? radius = cylindricalFace.GetRadius();
 ## Available Extensions
 
 ### XYZ Extensions (`SonnyRevitExtensions.Extensions.XYZs`)
+
 - `XYZComparisonExtensions` - Point comparison operations
 - `XYZDistanceExtensions` - Distance calculations
 - `XYZGeometryExtensions` - Geometric operations (centroid, intersection, point-in-polygon)
@@ -100,25 +104,31 @@ double? radius = cylindricalFace.GetRadius();
 - `XYZVectorExtensions` - Vector operations
 
 ### Curve Extensions (`SonnyRevitExtensions.Extensions.GeometryObjects.Curves`)
+
 - `CurveExtensions` - Operations for Curve class
 - `LineExtensions` - Operations for Line class
 
 ### Face Extensions (`SonnyRevitExtensions.Extensions.GeometryObjects.Faces`)
+
 - `FaceExtensions` - Operations for Face class
 - `PlanarFaceExtensions` - Operations for PlanarFace class
 - `CylindricalFaceExtensions` - Operations for CylindricalFace class
 
 ### Other Extensions
+
 - `ToleranceConstants` - Predefined tolerance constants for geometric comparisons
 - `LinqExtensions` - Additional LINQ operations
 
 ## Planned Extensions
 
-The goal is to open-source all extension methods that have been developed during work on the project. Future additions may include:
+The goal is to open-source all extension methods that have been developed during work on the project. Future additions
+may include:
+
 - Solid extensions
 - Edge extensions
 - Additional geometric operations
 
 ## Contributing
 
-Contributions welcome! Follow existing code style, add XML documentation, and ensure compatibility across all Revit versions.
+Contributions welcome! Follow existing code style, add XML documentation, and ensure compatibility across all Revit
+versions.
