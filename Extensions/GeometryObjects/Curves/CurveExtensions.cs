@@ -811,8 +811,8 @@ public static class CurveExtensions
             XYZ end0 = new(xyzes[0].X,
                 xyzes[0].Y,
                 elevation) ;
-            XYZ end1 = new(xyzes[^1].X,
-                xyzes[^1].Y,
+            XYZ end1 = new(xyzes[xyzes.Count - 1].X,
+                xyzes[xyzes.Count - 1].Y,
                 elevation) ;
             XYZ pointOnArc = new(arc.GetMiddlePoint()
                     .X,
