@@ -61,40 +61,16 @@ public static class XYZVectorExtensions
     /// <param name="secondVector">Second vector</param>
     /// <returns>True if vectors are parallel</returns>
     public static bool IsParallel(this XYZ firstVector,
-        XYZ secondVector) =>
-        AlignStraightVector(firstVector)
-            .CrossProduct(AlignStraightVector(secondVector))
-            .IsZeroLength() ;
-
-    /// <summary>
-    ///     Aligns vector to basis vectors if close enough
-    /// </summary>
-    /// <param name="vector">Vector to align</param>
-    /// <returns>Aligned vector</returns>
-    public static XYZ AlignStraightVector(this XYZ vector)
+        XYZ secondVector)
     {
-        if (Math.Abs((int)(Math.Abs(vector.X) - 1)) == 0)
-        {
-            return new XYZ(vector.X,
-                0,
-                0) ;
-        }
+        firstVector = firstVector.Normalize() ;
+        secondVector = secondVector.Normalize() ;
 
-        if (Math.Abs((int)(Math.Abs(vector.Y) - 1)) == 0)
-        {
-            return new XYZ(0,
-                vector.Y,
-                0) ;
-        }
-
-        if (Math.Abs((int)(Math.Abs(vector.Z) - 1)) == 0)
-        {
-            return new XYZ(0,
-                0,
-                vector.Z) ;
-        }
-
-        return vector ;
+        return firstVector
+                   .IsAlmostEqual3D(secondVector)
+               || firstVector
+                   .IsAlmostEqual3D(secondVector
+                       .Negate()) ;
     }
 
     /// <summary>
