@@ -12,20 +12,21 @@ public static class XYZGeometryExtensions
     /// <param name="polygonVertices">Vertices of the polygon</param>
     /// <returns>True if point is inside polygon</returns>
     public static bool IsPointInsidePolygon(this XYZ point,
-        List<XYZ> polygonVertices)
+        IEnumerable<XYZ> polygonVertices)
     {
+        var verticesList = polygonVertices.ToList() ;
         var angle = 0.0 ;
-        for (var i = 0; i < polygonVertices.Count; i++)
+        for (var i = 0; i < verticesList.Count; i++)
         {
-            var j = i == polygonVertices.Count - 1 ? 0 : i + 1 ;
-            XYZ a = new(polygonVertices[i].X,
-                polygonVertices[i].Y,
+            var j = i == verticesList.Count - 1 ? 0 : i + 1 ;
+            XYZ a = new(verticesList[i].X,
+                verticesList[i].Y,
                 0) ;
             XYZ b = new(point.X,
                 point.Y,
                 0) ;
-            XYZ c = new(polygonVertices[j].X,
-                polygonVertices[j].Y,
+            XYZ c = new(verticesList[j].X,
+                verticesList[j].Y,
                 0) ;
 
             var ba = Line.CreateBound(b,
@@ -37,7 +38,7 @@ public static class XYZGeometryExtensions
             angle += ba.AngleTo(bc) ;
         }
 
-        return Math.Abs(angle - 2 * Math.PI) < ToleranceConstants.HighPrecision ;
+        return Math.Abs(angle - 2 * Math.PI) < ToleranceConstants.Tolerance1E9 ;
     }
 
     /// <summary>
@@ -71,19 +72,25 @@ public static class XYZGeometryExtensions
     }
 
     /// <summary>
-    ///     Calculates the centroid of a list of points
+    ///     Calculates the centroid of a collection of points
     /// </summary>
-    /// <param name="sources">List of points</param>
+    /// <param name="sources">Collection of points</param>
     /// <returns>Centroid point</returns>
-    public static XYZ GetCentroid(this List<XYZ> sources)
+    public static XYZ GetCentroid(this IEnumerable<XYZ> sources)
     {
-        var centroid = sources[0] ;
-        for (var i = 1; i < sources.Count; i++)
+        var sourcesList = sources.ToList() ;
+        if (sourcesList.Count == 0)
         {
-            centroid = centroid.Add(sources[i]) ;
+            throw new ArgumentException("Collection cannot be empty", nameof(sources)) ;
         }
 
-        return centroid.Divide(sources.Count) ;
+        var centroid = sourcesList[0] ;
+        for (var i = 1; i < sourcesList.Count; i++)
+        {
+            centroid = centroid.Add(sourcesList[i]) ;
+        }
+
+        return centroid.Divide(sourcesList.Count) ;
     }
 
     /// <summary>
@@ -135,7 +142,7 @@ public static class XYZGeometryExtensions
         var denominator =
             firstLineDirection.X * secondLineDirection.Y - firstLineDirection.Y * secondLineDirection.X ;
 
-        if (Math.Abs(denominator) < ToleranceConstants.HighPrecision)
+        if (Math.Abs(denominator) < ToleranceConstants.Tolerance1E9)
         {
             return null ;
         }

@@ -66,11 +66,7 @@ public static class XYZVectorExtensions
         firstVector = firstVector.Normalize() ;
         secondVector = secondVector.Normalize() ;
 
-        return firstVector
-                   .IsAlmostEqual3D(secondVector)
-               || firstVector
-                   .IsAlmostEqual3D(secondVector
-                       .Negate()) ;
+        return firstVector.IsAlmostEqual3D(secondVector) || firstVector.IsAlmostEqual3D(secondVector.Negate()) ;
     }
 
     /// <summary>

@@ -10,12 +10,11 @@ public static class PlanarFaceExtensions
     /// <summary>
     ///     Gets all distinct points from multiple planar faces
     /// </summary>
-    /// <param name="planarFaces">The list of planar faces</param>
-    /// <returns>List of distinct XYZ points from all planar faces</returns>
-    public static List<XYZ> GetPoints(this List<PlanarFace> planarFaces) =>
+    /// <param name="planarFaces">The collection of planar faces</param>
+    /// <returns>Collection of distinct XYZ points from all planar faces</returns>
+    public static IEnumerable<XYZ> GetPoints(this IEnumerable<PlanarFace> planarFaces) =>
         planarFaces.SelectMany(x => x.GetPoints())
-            .DistinctXYZ()
-            .ToList() ;
+            .DistinctXYZ() ;
 
     /// <summary>
     ///     Checks if two planar faces are the same (coplanar and not parallel)
@@ -73,23 +72,21 @@ public static class PlanarFaceExtensions
         var lengthOfPointToPlane = planarFace1.Origin.GetLengthOfPointToPlane(planarFace2.FaceNormal,
             planarFace2.Origin) ;
 
-        return lengthOfPointToPlane >= ToleranceConstants.HighPrecision ;
+        return lengthOfPointToPlane >= ToleranceConstants.Tolerance1E9 ;
     }
 
     /// <summary>
     ///     Gets the boundary points of a planar face
     /// </summary>
     /// <param name="planarFace">The planar face</param>
-    /// <returns>List of boundary points</returns>
-    public static List<XYZ> GetBoundaryPoints(this PlanarFace planarFace)
+    /// <returns>Collection of boundary points</returns>
+    public static IEnumerable<XYZ> GetBoundaryPoints(this PlanarFace planarFace)
     {
-        List<XYZ> xyzs = new() ;
-
         var curveLoop = planarFace.GetEdgesAsCurveLoops()
             .FirstOrDefault() ;
         if (curveLoop == null)
         {
-            return xyzs ;
+            yield break ;
         }
 
         var curveLoopIterator = curveLoop.GetCurveLoopIterator() ;
@@ -101,25 +98,31 @@ public static class PlanarFaceExtensions
                 continue ;
             }
 
-            xyzs.Add(curve.GetEndPoint(0)) ;
+            yield return curve.GetEndPoint(0) ;
         }
-
-        return xyzs ;
     }
 
     /// <summary>
-    ///     Remove coplanar faces from the list, keeping only one face per plane
+    ///     Remove coplanar faces from the collection, keeping only one face per plane
     /// </summary>
-    public static List<PlanarFace> RemoveCoplanarFaces(this List<PlanarFace> planarFaces)
+    /// <param name="planarFaces">The collection of planar faces</param>
+    /// <returns>A new collection with coplanar faces removed</returns>
+    public static IEnumerable<PlanarFace> RemoveCoplanarFaces(this IEnumerable<PlanarFace> planarFaces)
     {
-        if (planarFaces.Count <= 1)
+        var planarFacesList = planarFaces.ToList() ;
+        if (planarFacesList.Count <= 1)
         {
-            return planarFaces ;
+            foreach (var face in planarFacesList)
+            {
+                yield return face ;
+            }
+
+            yield break ;
         }
 
         var uniqueFaces = new List<PlanarFace>() ;
 
-        foreach (var face in planarFaces)
+        foreach (var face in planarFacesList)
         {
             var isCoplanar = false ;
 
@@ -137,10 +140,9 @@ public static class PlanarFaceExtensions
             if (! isCoplanar)
             {
                 uniqueFaces.Add(face) ;
+                yield return face ;
             }
         }
-
-        return uniqueFaces ;
     }
 
     /// <summary>

@@ -10,21 +10,19 @@ public static class FaceExtensions
     /// <summary>
     ///     Gets all points from tessellating curves of multiple faces
     /// </summary>
-    /// <param name="faces">The list of faces</param>
-    /// <returns>List of XYZ points from all faces</returns>
-    public static List<XYZ> GetPoints(this List<Face> faces) =>
-        faces.SelectMany(x => x.GetPoints())
-            .ToList() ;
+    /// <param name="faces">The collection of faces</param>
+    /// <returns>Collection of XYZ points from all faces</returns>
+    public static IEnumerable<XYZ> GetPoints(this IEnumerable<Face> faces) =>
+        faces.SelectMany(x => x.GetPoints()) ;
 
     /// <summary>
     ///     Gets all lines from curves of multiple faces
     /// </summary>
-    /// <param name="faces">The list of faces</param>
-    /// <returns>List of lines extracted from face curves</returns>
-    public static List<Line> GetLines(this List<Face> faces) =>
+    /// <param name="faces">The collection of faces</param>
+    /// <returns>Collection of lines extracted from face curves</returns>
+    public static IEnumerable<Line> GetLines(this IEnumerable<Face> faces) =>
         faces.GetCurves()
-            .OfType<Line>()
-            .ToList() ;
+            .OfType<Line>() ;
 
     /// <summary>
     ///     Checks if a point is inside the face
@@ -51,8 +49,8 @@ public static class FaceExtensions
     /// </summary>
     /// <param name="face1">The first face</param>
     /// <param name="face2">The second face</param>
-    /// <returns>List of intersection points that are inside both faces</returns>
-    public static List<XYZ> GetIntersectionPoints(this Face face1,
+    /// <returns>Collection of intersection points that are inside both faces</returns>
+    public static IEnumerable<XYZ> GetIntersectionPoints(this Face face1,
         Face face2)
     {
         var faceIntersectionFaceResult = face1.Intersect(face2,
@@ -60,12 +58,11 @@ public static class FaceExtensions
 
         if (faceIntersectionFaceResult == FaceIntersectionFaceResult.NonIntersecting)
         {
-            return [] ;
+            yield break ;
         }
 
         IList<XYZ>? list = curve.Tessellate() ;
 
-        List<XYZ> listXyzes = new() ;
         foreach (var xyz in list)
         {
             var pointInsideInFace1 = face1.IsPointInside(xyz) ;
@@ -73,72 +70,64 @@ public static class FaceExtensions
 
             if (pointInsideInFace1 && pointInsideInFace2)
             {
-                listXyzes.Add(xyz) ;
+                yield return xyz ;
             }
         }
-
-        return listXyzes.DistinctXYZ()
-            .ToList() ;
     }
 
     /// <summary>
-    ///     Gets intersection points between a face and a list of faces
+    ///     Gets intersection points between a face and a collection of faces
     /// </summary>
     /// <param name="face">The face</param>
-    /// <param name="faces">The list of faces to intersect with</param>
-    /// <returns>List of intersection points</returns>
-    public static List<XYZ> GetIntersectionPoints(this Face face,
-        List<Face> faces) =>
-        faces.SelectMany(x => x.GetIntersectionPoints(face))
-            .ToList() ;
+    /// <param name="faces">The collection of faces to intersect with</param>
+    /// <returns>Collection of intersection points</returns>
+    public static IEnumerable<XYZ> GetIntersectionPoints(this Face face,
+        IEnumerable<Face> faces) =>
+        faces.SelectMany(x => x.GetIntersectionPoints(face)) ;
 
     /// <summary>
-    ///     Gets intersection points between two lists of faces
+    ///     Gets intersection points between two collections of faces
     /// </summary>
-    /// <param name="faces1">The first list of faces</param>
-    /// <param name="faces2">The second list of faces</param>
-    /// <returns>List of intersection points</returns>
-    public static List<XYZ> GetIntersectionPoints(this List<Face> faces1,
-        List<Face> faces2) =>
-        faces1.SelectMany(x => x.GetIntersectionPoints(faces2))
-            .ToList() ;
+    /// <param name="faces1">The first collection of faces</param>
+    /// <param name="faces2">The second collection of faces</param>
+    /// <returns>Collection of intersection points</returns>
+    public static IEnumerable<XYZ> GetIntersectionPoints(this IEnumerable<Face> faces1,
+        IEnumerable<Face> faces2) =>
+        faces1.SelectMany(x => x.GetIntersectionPoints(faces2)) ;
 
     /// <summary>
     ///     Gets intersection points between a face and a line
     /// </summary>
     /// <param name="face">The face</param>
     /// <param name="line">The line</param>
-    /// <returns>List of intersection points</returns>
-    public static List<XYZ> GetIntersectionPoints(this Face face,
+    /// <returns>Collection of intersection points</returns>
+    public static IEnumerable<XYZ> GetIntersectionPoints(this Face face,
         Line line)
     {
         var comparisonResult = face.Intersect(line,
             out var results) ;
 
-        List<XYZ> listXyzes = new() ;
-        if (comparisonResult == SetComparisonResult.Overlap)
+        if (comparisonResult != SetComparisonResult.Overlap)
         {
-            for (var i = 0; i < results.Size; i++)
-            {
-                var intersectionResult = results.get_Item(i) ;
-                var intersectionResultXyzPoint = intersectionResult.XYZPoint ;
-                listXyzes.Add(intersectionResultXyzPoint) ;
-            }
+            yield break ;
         }
 
-        return listXyzes ;
+        for (var i = 0; i < results.Size; i++)
+        {
+            var intersectionResult = results.get_Item(i) ;
+            yield return intersectionResult.XYZPoint ;
+        }
     }
 
     /// <summary>
-    ///     Gets intersection points between a list of faces and a line
+    ///     Gets intersection points between a collection of faces and a line
     /// </summary>
-    /// <param name="faces">The list of faces</param>
+    /// <param name="faces">The collection of faces</param>
     /// <param name="line">The line</param>
-    /// <returns>List of intersection points</returns>
-    public static List<XYZ> GetIntersectionPoints(this List<Face> faces,
+    /// <returns>Collection of intersection points</returns>
+    public static IEnumerable<XYZ> GetIntersectionPoints(this IEnumerable<Face> faces,
         Line line) =>
-        faces.SelectMany(x => x.GetIntersectionPoints(line))
-            .ToList() ;
+        faces.SelectMany(x => x.GetIntersectionPoints(line)) ;
 
     /// <summary>
     ///     Gets the normal vector of the face
@@ -229,67 +218,58 @@ public static class FaceExtensions
     ///     Gets all points from tessellating curves of the face
     /// </summary>
     /// <param name="face">The face</param>
-    /// <returns>List of XYZ points from tessellating all curves of the face</returns>
-    public static List<XYZ> GetPoints(this Face face)
+    /// <returns>Collection of XYZ points from tessellating all curves of the face</returns>
+    public static IEnumerable<XYZ> GetPoints(this Face face)
     {
-        List<XYZ> listXyzes = new() ;
         foreach (var curve in face.GetCurves())
         {
-            listXyzes.AddRange(curve.Tessellate()) ;
+            foreach (var point in curve.Tessellate())
+            {
+                yield return point ;
+            }
         }
-
-        return listXyzes ;
     }
 
     /// <summary>
     ///     Gets all curves from multiple faces
     /// </summary>
-    /// <param name="faces">The list of faces</param>
-    /// <returns>List of curves from all faces</returns>
-    public static List<Curve> GetCurves(this List<Face> faces) =>
-        faces.SelectMany(x => x.GetCurves())
-            .ToList() ;
+    /// <param name="faces">The collection of faces</param>
+    /// <returns>Collection of curves from all faces</returns>
+    public static IEnumerable<Curve> GetCurves(this IEnumerable<Face> faces) =>
+        faces.SelectMany(x => x.GetCurves()) ;
 
     /// <summary>
     ///     Gets all curves from the face edges
     /// </summary>
     /// <param name="face">The face</param>
-    /// <returns>List of curves extracted from face edge loops</returns>
-    public static List<Curve> GetCurves(this Face face)
+    /// <returns>Collection of curves extracted from face edge loops</returns>
+    public static IEnumerable<Curve> GetCurves(this Face face)
     {
-        List<Curve> listCurves = new() ;
-
         var edgeArrayArray = face.EdgeLoops ;
         foreach (EdgeArray edgeArray in edgeArrayArray)
         {
             foreach (Edge edge in edgeArray)
             {
-                listCurves.Add(edge.AsCurve()) ;
+                yield return edge.AsCurve() ;
             }
         }
-
-        return listCurves ;
     }
 
     /// <summary>
     ///     Gets all edges from the face
     /// </summary>
     /// <param name="face">The face</param>
-    /// <returns>List of edges from all edge loops of the face</returns>
-    public static List<Edge> GetEdges(this Face face)
+    /// <returns>Collection of edges from all edge loops of the face</returns>
+    public static IEnumerable<Edge> GetEdges(this Face face)
     {
-        List<Edge> listEdges = new() ;
-
         var edgeArrayArray = face.EdgeLoops ;
         foreach (EdgeArray edgeArray in edgeArrayArray)
         {
             foreach (Edge edge in edgeArray)
             {
-                listEdges.Add(edge) ;
+                yield return edge ;
             }
         }
-
-        return listEdges ;
     }
 
     /// <summary>

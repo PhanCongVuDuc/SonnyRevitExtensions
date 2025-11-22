@@ -11,7 +11,7 @@ public static class ToleranceConstants
     ///     High precision for critical calculations (1.0e-09)
     ///     Used for: angle calculations, parameter comparisons, vector operations
     /// </summary>
-    public const double HighPrecision = 1.0e-09 ;
+    public const double Tolerance1E9 = 1.0e-09 ;
 
     /// <summary>
     ///     Standard precision for most geometric operations (0.0001)

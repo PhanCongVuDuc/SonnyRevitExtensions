@@ -6,13 +6,13 @@ namespace SonnyRevitExtensions.Extensions.XYZs ;
 public static class XYZDistanceExtensions
 {
     /// <summary>
-    ///     Gets the minimum distance from a point to a list of points
+    ///     Gets the minimum distance from a point to a collection of points
     /// </summary>
     /// <param name="point">Target point</param>
-    /// <param name="points">List of points to check</param>
+    /// <param name="points">Collection of points to check</param>
     /// <returns>Minimum distance</returns>
     public static double GetMinimumDistanceToPoints(this XYZ point,
-        List<XYZ> points) =>
+        IEnumerable<XYZ> points) =>
         points.Min(p => p.DistanceTo(point)) ;
 
     /// <summary>

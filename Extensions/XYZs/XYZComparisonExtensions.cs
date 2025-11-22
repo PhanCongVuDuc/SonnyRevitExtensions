@@ -55,7 +55,7 @@ public static class XYZComparisonExtensions
         const double tolerance = ToleranceConstants.CoarseTolerance ;
 
         // Check if testDirection is valid
-        if (direction.GetLength() < ToleranceConstants.HighPrecision)
+        if (direction.GetLength() < ToleranceConstants.Tolerance1E9)
         {
             return false ;
         }
@@ -83,8 +83,7 @@ public static class XYZComparisonExtensions
     ///     Removes duplicate points
     /// </summary>
     /// <param name="xyzes">Collection of points</param>
-    /// <returns>List of distinct points</returns>
-    public static List<XYZ> DistinctXYZ(this IEnumerable<XYZ> xyzes) =>
-        xyzes.DistinctBy(x => (x.X, x.Y, x.Z))
-            .ToList() ;
+    /// <returns>Collection of distinct points</returns>
+    public static IEnumerable<XYZ> DistinctXYZ(this IEnumerable<XYZ> xyzes) =>
+        xyzes.DistinctBy(x => (x.X, x.Y, x.Z)) ;
 }

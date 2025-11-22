@@ -73,7 +73,7 @@ public static class DocumentExtension
     {
         var idArray = elementIds.ToArray() ;
         return idArray.Length == 0
-            ? Enumerable.Empty<TElement>()
+            ? []
             : new ElementQuery<TElement>(document, idArray) ;
     }
 
@@ -129,7 +129,7 @@ public static class DocumentExtension
 
         var idArray = elementIds.ToArray() ;
         return idArray.Length == 0
-            ? Enumerable.Empty<TElement>()
+            ? []
             : new ElementQuery<TElement>(document, idArray, type) ;
     }
 
@@ -137,12 +137,11 @@ public static class DocumentExtension
     /// Gets all instances of elements in the document
     /// </summary>
     /// <param name="document">The document</param>
-    /// <returns>A list of all element instances</returns>
-    public static IList<Element> GetInstances(this Document document)
+    /// <returns>A collection of all element instances</returns>
+    public static IEnumerable<Element> GetInstances(this Document document)
     {
         return new FilteredElementCollector(document)
-            .WhereElementIsNotElementType()
-            .ToElements() ;
+            .WhereElementIsNotElementType() ;
     }
 
     /// <summary>
@@ -150,14 +149,13 @@ public static class DocumentExtension
     /// </summary>
     /// <param name="document">The document</param>
     /// <param name="category">The category to filter by</param>
-    /// <returns>A list of element instances</returns>
-    public static IList<Element> GetInstances(this Document document,
+    /// <returns>A collection of element instances</returns>
+    public static IEnumerable<Element> GetInstances(this Document document,
         BuiltInCategory category)
     {
         return new FilteredElementCollector(document)
             .WhereElementIsNotElementType()
-            .OfCategory(category)
-            .ToElements() ;
+            .OfCategory(category) ;
     }
 
     /// <summary>
@@ -165,13 +163,12 @@ public static class DocumentExtension
     /// </summary>
     /// <param name="document">The document</param>
     /// <param name="viewId">The view ID</param>
-    /// <returns>A list of element instances</returns>
-    public static IList<Element> GetInstances(this Document document,
+    /// <returns>A collection of element instances</returns>
+    public static IEnumerable<Element> GetInstances(this Document document,
         ElementId viewId)
     {
         return new FilteredElementCollector(document, viewId)
-            .WhereElementIsNotElementType()
-            .ToElements() ;
+            .WhereElementIsNotElementType() ;
     }
 
     /// <summary>
@@ -180,15 +177,14 @@ public static class DocumentExtension
     /// <param name="document">The document</param>
     /// <param name="viewId">The view ID</param>
     /// <param name="category">The category to filter by</param>
-    /// <returns>A list of element instances</returns>
-    public static IList<Element> GetInstances(this Document document,
+    /// <returns>A collection of element instances</returns>
+    public static IEnumerable<Element> GetInstances(this Document document,
         ElementId viewId,
         BuiltInCategory category)
     {
         return new FilteredElementCollector(document, viewId)
             .WhereElementIsNotElementType()
-            .OfCategory(category)
-            .ToElements() ;
+            .OfCategory(category) ;
     }
 
     /// <summary>

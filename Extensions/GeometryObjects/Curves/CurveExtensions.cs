@@ -312,25 +312,28 @@ public static class CurveExtensions
     }
 
     /// <summary>
-    ///     Gets the curve from a list that has the minimum distance from the two end points of a target curve.
+    ///     Gets the curve from a collection that has the minimum distance from the two end points of a target curve.
     /// </summary>
     /// <param name="curve">The target curve.</param>
-    /// <param name="curves">The list of curves to search.</param>
-    /// <returns>The closest curve, or null if the list is empty.</returns>
-    public static Curve GetClosestCurve(this Curve curve,
-        List<Curve> curves)
+    /// <param name="curves">The collection of curves to search.</param>
+    /// <returns>The closest curve, or null if the collection is empty.</returns>
+    public static Curve? GetClosestCurve(this Curve curve,
+        IEnumerable<Curve> curves)
     {
+        Curve? cResult = null ;
         var min = double.MaxValue ;
-        var cResult = curves.First() ;
+
         foreach (var c in curves)
         {
             var d = GetMinimumDistanceToCurve(curve,
                 c) ;
-            if (d < min)
+            if (! (d < min))
             {
-                min = d ;
-                cResult = c ;
+                continue ;
             }
+
+            min = d ;
+            cResult = c ;
         }
 
         return cResult ;
@@ -361,13 +364,13 @@ public static class CurveExtensions
     }
 
     /// <summary>
-    ///     Checks if a curve is fully contained within any of the curves in a list.
+    ///     Checks if a curve is fully contained within any of the curves in a collection.
     /// </summary>
     /// <param name="curve">The curve to check.</param>
-    /// <param name="curves">The list of curves used for checking.</param>
-    /// <returns>True if the curve is fully contained in any curve from the list, false otherwise.</returns>
+    /// <param name="curves">The collection of curves used for checking.</param>
+    /// <returns>True if the curve is fully contained in any curve from the collection, false otherwise.</returns>
     public static bool IsFullyContained(this Curve curve,
-        List<Curve> curves)
+        IEnumerable<Curve> curves)
     {
         foreach (var curveTarget in curves)
         {
@@ -568,25 +571,24 @@ public static class CurveExtensions
     /// </summary>
     /// <param name="curve">The curve.</param>
     /// <param name="distance">The distance between points in millimeters.</param>
-    /// <returns>A list of points along the curve.</returns>
-    public static List<XYZ> GetPointsOnCurve(this Curve curve,
+    /// <returns>A collection of points along the curve.</returns>
+    public static IEnumerable<XYZ> GetPointsOnCurve(this Curve curve,
         double distance)
     {
-        List<XYZ> pointsOnLines = new() ;
         if (distance == 0)
         {
-            return pointsOnLines ;
+            yield break ;
         }
 
         if (curve is Line line)
         {
             if (line.Length < ToleranceConstants.GeneralTolerance)
             {
-                return pointsOnLines ;
+                yield break ;
             }
 
-            pointsOnLines.Add(line.GetEndPoint(0)) ;
-            pointsOnLines.Add(line.GetEndPoint(1)) ;
+            yield return line.GetEndPoint(0) ;
+            yield return line.GetEndPoint(1) ;
 
             var direction = line.Direction() ;
             var r = Math.Round(line.Length / distance.FromMillimeters(),
@@ -596,59 +598,67 @@ public static class CurveExtensions
             {
                 var nextPoint = line.GetEndPoint(0)
                     .Add(direction.Multiply(distance.FromMillimeters() * i)) ;
-                pointsOnLines.Add(nextPoint) ;
+                yield return nextPoint ;
             }
         }
         else if (curve is Arc arc)
         {
-            pointsOnLines.AddRange(arc.Tessellate()) ;
+            foreach (var point in arc.Tessellate())
+            {
+                yield return point ;
+            }
         }
         else if (curve is NurbSpline spline)
         {
-            pointsOnLines.AddRange(spline.Tessellate()) ;
+            foreach (var point in spline.Tessellate())
+            {
+                yield return point ;
+            }
         }
-
-        return pointsOnLines ;
     }
 
     /// <summary>
-    ///     Removes duplicate curves from a list.
+    ///     Removes duplicate curves from a collection.
     /// </summary>
-    /// <param name="curves">The list of curves.</param>
-    /// <returns>A new list with duplicate curves removed.</returns>
-    public static List<Curve> RemoveDuplicateCurves(this List<Curve> curves)
+    /// <param name="curves">The collection of curves.</param>
+    /// <returns>A new collection with duplicate curves removed.</returns>
+    public static IEnumerable<Curve> RemoveDuplicateCurves(this IEnumerable<Curve> curves)
     {
-        foreach (var curve in curves)
+        var curvesList = curves.ToList() ;
+        var result = new List<Curve>() ;
+
+        foreach (var curve in curvesList)
         {
-            var allCurveToCheck = curves.Except([curve])
-                .ToList() ;
-            if (! curve.IsFullyContained(allCurveToCheck))
+            var allCurveToCheck = curvesList.Except([curve]) ;
+            if (curve.IsFullyContained(allCurveToCheck))
             {
                 continue ;
             }
 
-            curves = curves.Except([curve])
-                .ToList() ;
+            result.Add(curve) ;
         }
 
-        return curves ;
+        return result ;
     }
 
     /// <summary>
-    ///     Create a new CurveLoop from a list of points.
+    ///     Create a new CurveLoop from a collection of points.
     /// </summary>
-    public static CurveLoop CreateCurveLoop(this List<XYZ> points)
+    /// <param name="points">The collection of points</param>
+    /// <returns>A new CurveLoop created from the points</returns>
+    public static CurveLoop CreateCurveLoop(this IEnumerable<XYZ> points)
     {
-        var n = points.Count ;
+        var pointsList = points.ToList() ;
+        var n = pointsList.Count ;
         CurveLoop curveLoop = new() ;
         for (var i = 1; i < n; ++i)
         {
-            curveLoop.Append(Line.CreateBound(points[i - 1],
-                points[i])) ;
+            curveLoop.Append(Line.CreateBound(pointsList[i - 1],
+                pointsList[i])) ;
         }
 
-        curveLoop.Append(Line.CreateBound(points[n],
-            points[0])) ;
+        curveLoop.Append(Line.CreateBound(pointsList[n - 1],
+            pointsList[0])) ;
         return curveLoop ;
     }
 
@@ -656,59 +666,50 @@ public static class CurveExtensions
     ///     Gets all points from tessellating a curve.
     /// </summary>
     /// <param name="curve">The curve.</param>
-    /// <returns>A list of XYZ points from the curve tessellation.</returns>
-    public static List<XYZ> GetXYZPoints(this Curve curve)
-    {
-        List<XYZ> listXyz = new() ;
-        listXyz.AddRange(curve.Tessellate()) ;
-        return listXyz ;
-    }
+    /// <returns>A collection of XYZ points from the curve tessellation.</returns>
+    public static IEnumerable<XYZ> GetXYZPoints(this Curve curve) =>
+        curve.Tessellate() ;
 
     /// <summary>
-    ///     Gets all points from tessellating a list of curves.
+    ///     Gets all points from tessellating a collection of curves.
     /// </summary>
-    /// <param name="curves">The list of curves.</param>
-    /// <returns>A list of distinct XYZ points from all curves.</returns>
-    public static List<XYZ> GetXYZPoints(this List<Curve> curves) =>
+    /// <param name="curves">The collection of curves.</param>
+    /// <returns>A collection of distinct XYZ points from all curves.</returns>
+    public static IEnumerable<XYZ> GetXYZPoints(this IEnumerable<Curve> curves) =>
         curves.SelectMany(x => x.GetXYZPoints())
             .DistinctXYZ() ;
 
     /// <summary>
-    ///     Filters a list of curves to return only Line objects.
+    ///     Filters a collection of curves to return only Line objects.
     /// </summary>
-    /// <param name="curves">The list of curves.</param>
-    /// <returns>A list containing only Line objects from the input curves.</returns>
-    public static List<Line> GetLines(this List<Curve> curves) =>
-        curves.OfType<Line>()
-            .ToList() ;
+    /// <param name="curves">The collection of curves.</param>
+    /// <returns>A collection containing only Line objects from the input curves.</returns>
+    public static IEnumerable<Line> GetLines(this IEnumerable<Curve> curves) =>
+        curves.OfType<Line>() ;
 
     /// <summary>
     ///     Gets all intersection points between two curves.
     /// </summary>
     /// <param name="curve">The first curve.</param>
     /// <param name="curveOther">The second curve.</param>
-    /// <returns>A list of intersection points, or an empty list if the curves do not intersect.</returns>
-    public static List<XYZ> GetIntersectionPoints(this Curve curve,
+    /// <returns>A collection of intersection points, or empty if the curves do not intersect.</returns>
+    public static IEnumerable<XYZ> GetIntersectionPoints(this Curve curve,
         Curve curveOther)
     {
-        List<XYZ> xyzes = new() ;
-
         var setComparisonResult = curve.Intersect(curveOther,
             out var intersectionResultArray) ;
 
         if (setComparisonResult == SetComparisonResult.Disjoint
             || intersectionResultArray == null)
         {
-            return xyzes ;
+            yield break ;
         }
 
         for (var i = 0; i < intersectionResultArray.Size; i++)
         {
             var intersectionResult = intersectionResultArray.get_Item(i) ;
-            xyzes.Add(intersectionResult.XYZPoint) ;
+            yield return intersectionResult.XYZPoint ;
         }
-
-        return xyzes ;
     }
 
     /// <summary>
@@ -727,27 +728,26 @@ public static class CurveExtensions
     }
 
     /// <summary>
-    ///     Gets all intersection points between a list of curves and another curve.
+    ///     Gets all intersection points between a collection of curves and another curve.
     /// </summary>
-    /// <param name="curves">The list of curves.</param>
+    /// <param name="curves">The collection of curves.</param>
     /// <param name="curveOther">The other curve.</param>
-    /// <returns>A list of distinct intersection points.</returns>
-    public static List<XYZ> GetIntersectionPoints(this List<Curve> curves,
+    /// <returns>A collection of distinct intersection points.</returns>
+    public static IEnumerable<XYZ> GetIntersectionPoints(this IEnumerable<Curve> curves,
         Curve curveOther) =>
         curves.SelectMany(x => x.GetIntersectionPoints(curveOther))
             .DistinctXYZ() ;
 
     /// <summary>
-    ///     Gets all intersection points between two lists of curves.
+    ///     Gets all intersection points between two collections of curves.
     /// </summary>
-    /// <param name="curves">The first list of curves.</param>
-    /// <param name="curvesOther">The second list of curves.</param>
-    /// <returns>A list of distinct intersection points.</returns>
-    public static List<XYZ> GetIntersectionPoints(this List<Curve> curves,
-        List<Curve> curvesOther) =>
+    /// <param name="curves">The first collection of curves.</param>
+    /// <param name="curvesOther">The second collection of curves.</param>
+    /// <returns>A collection of distinct intersection points.</returns>
+    public static IEnumerable<XYZ> GetIntersectionPoints(this IEnumerable<Curve> curves,
+        IEnumerable<Curve> curvesOther) =>
         curves.SelectMany(curvesOther.GetIntersectionPoints)
-            .Distinct()
-            .ToList() ;
+            .Distinct() ;
 
     /// <summary>
     ///     Checks if two curves intersect.
@@ -759,20 +759,20 @@ public static class CurveExtensions
         Curve curveOther)
     {
         var intersectCurve = curve.GetIntersectionPoints(curveOther) ;
-        return intersectCurve.Count > 0 ;
+        return intersectCurve.Any() ;
     }
 
     /// <summary>
-    ///     Checks if any curves from two lists intersect.
+    ///     Checks if any curves from two collections intersect.
     /// </summary>
-    /// <param name="curves">The first list of curves.</param>
-    /// <param name="curvesOther">The second list of curves.</param>
+    /// <param name="curves">The first collection of curves.</param>
+    /// <param name="curvesOther">The second collection of curves.</param>
     /// <returns>True if any curves intersect, false otherwise.</returns>
-    public static bool IsIntersecting(this List<Curve> curves,
-        List<Curve> curvesOther)
+    public static bool IsIntersecting(this IEnumerable<Curve> curves,
+        IEnumerable<Curve> curvesOther)
     {
         var intersectCurve = curves.GetIntersectionPoints(curvesOther) ;
-        return intersectCurve.Count > 0 ;
+        return intersectCurve.Any() ;
     }
 
     /// <summary>
@@ -807,7 +807,7 @@ public static class CurveExtensions
 
         if (curve is Arc arc)
         {
-            var xyzes = arc.GetXYZPoints() ;
+            var xyzes = arc.GetXYZPoints().ToList() ;
             XYZ end0 = new(xyzes[0].X,
                 xyzes[0].Y,
                 elevation) ;
@@ -871,24 +871,25 @@ public static class CurveExtensions
             .Divide(2) ;
 
     /// <summary>
-    ///     Finds the curve from a list that contains a specified point.
+    ///     Finds the curve from a collection that contains a specified point.
     /// </summary>
-    /// <param name="curves">The list of curves to search.</param>
+    /// <param name="curves">The collection of curves to search.</param>
     /// <param name="indexResult">Output parameter that receives the index of the found curve, or -1 if not found.</param>
     /// <param name="origin">The point to search for.</param>
     /// <returns>The curve containing the point, or null if not found.</returns>
-    public static Curve? FindCurveContainingPoint(this List<Curve> curves,
+    public static Curve? FindCurveContainingPoint(this IEnumerable<Curve> curves,
         ref int indexResult,
         XYZ origin)
     {
-        foreach (var curve in curves)
+        var curvesList = curves.ToList() ;
+        foreach (var curve in curvesList)
         {
             if (! curve.ContainsPoint(origin))
             {
                 continue ;
             }
 
-            indexResult = curves.IndexOf(curve) ;
+            indexResult = curvesList.IndexOf(curve) ;
             return curve ;
         }
 
@@ -897,13 +898,13 @@ public static class CurveExtensions
     }
 
     /// <summary>
-    ///     Merges connected curves in a list by joining them together.
+    ///     Merges connected curves in a collection by joining them together.
     /// </summary>
-    /// <param name="curves">The list of curves to merge.</param>
-    /// <returns>A new list with connected curves merged.</returns>
-    public static List<Curve> MergeConnectedCurves(this List<Curve> curves)
+    /// <param name="curves">The collection of curves to merge.</param>
+    /// <returns>A new collection with connected curves merged.</returns>
+    public static IEnumerable<Curve> MergeConnectedCurves(this IList<Curve> curves)
     {
-        List<Curve> newCurves = new() ;
+        List<Curve> newCurves = [] ;
         for (var i = 0; i < curves.Count; i++)
         {
             var curve = curves[i] ;

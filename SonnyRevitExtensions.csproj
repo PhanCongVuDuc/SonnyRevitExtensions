@@ -48,4 +48,8 @@
         <PackageReference Include="MoreLinq" Version="3.4.2"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Extensions\GeometryObjects\Solids\" />
+    </ItemGroup>
+
 </Project>
