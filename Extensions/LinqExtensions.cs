@@ -1,5 +1,3 @@
-using MoreLinq ;
-
 namespace SonnyRevitExtensions.Extensions ;
 
 /// <summary>
@@ -19,15 +17,9 @@ public static class LinqExtensions
     public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source,
         Func<TSource, TKey> keySelector)
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof( source )) ;
-        }
+        ArgumentNullException.ThrowIfNull(source);
 
-        if (keySelector == null)
-        {
-            throw new ArgumentNullException(nameof( keySelector )) ;
-        }
+        ArgumentNullException.ThrowIfNull(keySelector);
 
 #if REVIT2025_OR_GREATER
         // Use built-in System.Linq.DistinctBy for .NET 8.0 (Revit 2025-2026)
