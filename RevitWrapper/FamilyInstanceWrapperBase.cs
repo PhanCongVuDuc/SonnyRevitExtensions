@@ -5,4 +5,5 @@ namespace SonnyRevitExtensions.RevitWrapper ;
 
 public class FamilyInstanceWrapperBase(FamilyInstance familyInstance) : ElementWrapperBase(familyInstance)
 {
+    public FamilyInstance FamilyInstance { get ; } = familyInstance ;
 }

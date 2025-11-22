@@ -514,7 +514,7 @@ public static class CurveExtensions
 
         var v = endPoint - startPoint ;
         var dxy = Math.Abs(v.X) + Math.Abs(v.Y) ;
-        var w = dxy > ToleranceConstants.StandardPrecision ? XYZ.BasisZ : XYZ.BasisY ;
+        var w = dxy > ToleranceConstants.Tolerance1E4 ? XYZ.BasisZ : XYZ.BasisY ;
         var norm = v.CrossProduct(w)
             .Normalize() ;
 
@@ -545,7 +545,7 @@ public static class CurveExtensions
 
         var v = curve.GetEndPoint(0) - curve.GetEndPoint(1) ;
         var dxy = Math.Abs(v.X) + Math.Abs(v.Y) ;
-        var w = dxy > ToleranceConstants.StandardPrecision ? XYZ.BasisZ : XYZ.BasisY ;
+        var w = dxy > ToleranceConstants.Tolerance1E4 ? XYZ.BasisZ : XYZ.BasisY ;
         var norm = v.CrossProduct(w)
             .Normalize() ;
         try
@@ -853,7 +853,7 @@ public static class CurveExtensions
     /// <returns>True if the point is on the curve within tolerance, false otherwise.</returns>
     public static bool ContainsPoint(this Curve curve,
         XYZ origin,
-        double tolerance = ToleranceConstants.StandardPrecision)
+        double tolerance = ToleranceConstants.Tolerance1E4)
     {
         var result = curve.Project(origin) ;
         var distanceTo = result.XYZPoint.DistanceTo(origin) ;

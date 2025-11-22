@@ -106,4 +106,76 @@ public static class PlanarFaceExtensions
 
         return xyzs ;
     }
+
+    /// <summary>
+    ///     Remove coplanar faces from the list, keeping only one face per plane
+    /// </summary>
+    public static List<PlanarFace> RemoveCoplanarFaces(this List<PlanarFace> planarFaces)
+    {
+        if (planarFaces.Count <= 1)
+        {
+            return planarFaces ;
+        }
+
+        var uniqueFaces = new List<PlanarFace>() ;
+
+        foreach (var face in planarFaces)
+        {
+            var isCoplanar = false ;
+
+            foreach (var uniqueFace in uniqueFaces)
+            {
+                // Check if faces are coplanar by comparing their planes
+                if (AreFacesCoplanar(face,
+                        uniqueFace))
+                {
+                    isCoplanar = true ;
+                    break ;
+                }
+            }
+
+            if (! isCoplanar)
+            {
+                uniqueFaces.Add(face) ;
+            }
+        }
+
+        return uniqueFaces ;
+    }
+
+    /// <summary>
+    ///     Check if two planar faces are coplanar (on the same plane)
+    /// </summary>
+    public static bool AreFacesCoplanar(this PlanarFace face1,
+        PlanarFace face2)
+    {
+        // Get plane origins and normals
+        var origin1 = face1.Origin ;
+        var normal1 = face1.FaceNormal ;
+        var origin2 = face2.Origin ;
+        var normal2 = face2.FaceNormal ;
+
+        return AreFacesCoplanar(normal1,
+            origin1,
+            normal2,
+            origin2) ;
+    }
+
+    public static bool AreFacesCoplanar(XYZ normal1,
+        XYZ origin1,
+        XYZ normal2,
+        XYZ origin2)
+    {
+        // Check if normals are parallel (same direction or opposite)
+        if (! normal1.IsParallel(normal2))
+        {
+            return false ;
+        }
+
+        // Check if origin2 lies on the plane defined by face1
+        var vectorBetweenOrigins = origin2 - origin1 ;
+        var distance = Math.Abs(vectorBetweenOrigins.DotProduct(normal1)) ;
+
+        return distance < ToleranceConstants.Tolerance1E4 ;
+    }
 }

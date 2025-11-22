@@ -3,9 +3,7 @@
 
 namespace SonnyRevitExtensions.RevitWrapper ;
 
-public class GridWrapperBase(Grid grid) : ElementWrapperBase(grid)
+public class DimensionWrapperBase(Dimension dimension) : ElementWrapperBase(dimension)
 {
-    private Line? _line ;
-    public Grid Grid { get ; } = grid ;
-    public Line? Line => _line ??= Grid.Curve as Line ;
+    public Dimension Dimension { get ; } = dimension ;
 }

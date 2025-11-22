@@ -17,7 +17,7 @@ public static class ToleranceConstants
     ///     Standard precision for most geometric operations (0.0001)
     ///     Used for: general floating point comparisons, volume thresholds
     /// </summary>
-    public const double StandardPrecision = 0.0001 ;
+    public const double Tolerance1E4 = 0.0001 ;
 
     /// <summary>
     ///     General tolerance for distance and geometric operations (0.001)
@@ -45,7 +45,7 @@ public static class ToleranceConstants
     /// </summary>
     public static bool AreEqual(double value1,
         double value2) =>
-        Math.Abs(value1 - value2) < StandardPrecision ;
+        Math.Abs(value1 - value2) < Tolerance1E4 ;
 
     /// <summary>
     ///     Checks if two double values are equal within specified tolerance
@@ -58,7 +58,7 @@ public static class ToleranceConstants
     /// <summary>
     ///     Checks if a value is zero within standard precision
     /// </summary>
-    public static bool IsZero(double value) => Math.Abs(value) < StandardPrecision ;
+    public static bool IsZero(double value) => Math.Abs(value) < Tolerance1E4 ;
 
     /// <summary>
     ///     Checks if a value is zero within specified tolerance
