@@ -3,16 +3,26 @@
 
 namespace SonnyRevitExtensions.Extensions.GeometryObjects.Faces ;
 
+/// <summary>
+///     Extension methods for extracting curves and edges from Face geometry
+/// </summary>
 public static class FaceCurveExtensions
 {
+    /// <summary>
+    ///     Gets all lines from curves of the face
+    /// </summary>
+    /// <param name="face">The face</param>
+    /// <returns>Collection of lines extracted from face curves</returns>
+    public static IEnumerable<Line> GetLines(this Face face) =>
+        face.GetCurves()
+            .OfType<Line>() ;
+
     /// <summary>
     ///     Gets all lines from curves of multiple faces
     /// </summary>
     /// <param name="faces">The collection of faces</param>
     /// <returns>Collection of lines extracted from face curves</returns>
-    public static IEnumerable<Line> GetLines(this IEnumerable<Face> faces) =>
-        faces.GetCurves()
-            .OfType<Line>() ;
+    public static IEnumerable<Line> GetLines(this IEnumerable<Face> faces) => faces.SelectMany(x => x.GetLines()) ;
 
     /// <summary>
     ///     Gets all curves from multiple faces
@@ -39,6 +49,22 @@ public static class FaceCurveExtensions
     }
 
     /// <summary>
+    ///     Gets all arcs from curves of the face
+    /// </summary>
+    /// <param name="face">The face</param>
+    /// <returns>Collection of arcs extracted from face curves</returns>
+    public static IEnumerable<Arc> GetArcs(this Face face) =>
+        face.GetCurves()
+            .OfType<Arc>() ;
+
+    /// <summary>
+    ///     Gets all arcs from curves of multiple faces
+    /// </summary>
+    /// <param name="faces">The collection of faces</param>
+    /// <returns>Collection of arcs extracted from face curves</returns>
+    public static IEnumerable<Arc> GetArcs(this IEnumerable<Face> faces) => faces.SelectMany(x => x.GetArcs()) ;
+
+    /// <summary>
     ///     Gets all edges from the face
     /// </summary>
     /// <param name="face">The face</param>
@@ -54,6 +80,13 @@ public static class FaceCurveExtensions
             }
         }
     }
+
+    /// <summary>
+    ///     Gets all edges from multiple faces
+    /// </summary>
+    /// <param name="faces">The collection of faces</param>
+    /// <returns>Collection of edges from all faces</returns>
+    public static IEnumerable<Edge> GetEdges(this IEnumerable<Face> faces) => faces.SelectMany(x => x.GetEdges()) ;
 
     /// <summary>
     ///     Gets an edge from the face that matches the specified direction

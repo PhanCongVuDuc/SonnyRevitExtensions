@@ -11,13 +11,6 @@ namespace SonnyRevitExtensions.Extensions.GeometryObjects.Solids ;
 public static class SolidFaceExtensions
 {
     /// <summary>
-    ///     Gets all faces from a collection of solids
-    /// </summary>
-    /// <param name="solids">Collection of solids</param>
-    /// <returns>Collection of faces from all solids</returns>
-    public static IEnumerable<Face> GetFaces(this IEnumerable<Solid> solids) => solids.SelectMany(x => x.GetFaces()) ;
-
-    /// <summary>
     ///     Gets all faces from a solid
     /// </summary>
     /// <param name="solid">The solid</param>
@@ -31,13 +24,11 @@ public static class SolidFaceExtensions
     }
 
     /// <summary>
-    ///     Gets all planar faces from a collection of solids
+    ///     Gets all faces from a collection of solids
     /// </summary>
     /// <param name="solids">Collection of solids</param>
-    /// <returns>Collection of planar faces from all solids</returns>
-    public static IEnumerable<PlanarFace> GetPlanarFaces(this IEnumerable<Solid> solids) =>
-        solids.GetFaces()
-            .OfType<PlanarFace>() ;
+    /// <returns>Collection of faces from all solids</returns>
+    public static IEnumerable<Face> GetFaces(this IEnumerable<Solid> solids) => solids.SelectMany(x => x.GetFaces()) ;
 
     /// <summary>
     ///     Gets all planar faces from a solid
@@ -46,6 +37,15 @@ public static class SolidFaceExtensions
     /// <returns>Collection of planar faces from the solid</returns>
     public static IEnumerable<PlanarFace> GetPlanarFaces(this Solid solid) =>
         solid.GetFaces()
+            .OfType<PlanarFace>() ;
+
+    /// <summary>
+    ///     Gets all planar faces from a collection of solids
+    /// </summary>
+    /// <param name="solids">Collection of solids</param>
+    /// <returns>Collection of planar faces from all solids</returns>
+    public static IEnumerable<PlanarFace> GetPlanarFaces(this IEnumerable<Solid> solids) =>
+        solids.GetFaces()
             .OfType<PlanarFace>() ;
 
     /// <summary>
@@ -61,4 +61,21 @@ public static class SolidFaceExtensions
         solid.GetPlanarFaces()
             .Where(x => x.FaceNormal.IsAlmostEqual3D(normalFace,
                 tolerance)) ;
+
+    /// <summary>
+    ///     Gets all cylindrical faces from a solid
+    /// </summary>
+    /// <param name="solid">The solid</param>
+    /// <returns>Collection of cylindrical faces from the solid</returns>
+    public static IEnumerable<CylindricalFace> GetCylindricalFaces(this Solid solid) =>
+        solid.GetFaces()
+            .OfType<CylindricalFace>() ;
+
+    /// <summary>
+    ///     Gets all cylindrical faces from a collection of solids
+    /// </summary>
+    /// <param name="solids">Collection of solids</param>
+    /// <returns>Collection of cylindrical faces from all solids</returns>
+    public static IEnumerable<CylindricalFace> GetCylindricalFaces(this IEnumerable<Solid> solids) =>
+        solids.SelectMany(x => x.GetCylindricalFaces()) ;
 }
